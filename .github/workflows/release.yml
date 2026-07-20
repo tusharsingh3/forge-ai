@@ -3,7 +3,7 @@ name: Release Forge AI
 on:
   push:
     tags:
-      - "v1.0.0"
+      - "v*"
 
 permissions:
   contents: write
@@ -25,9 +25,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v1.0.0
-          releaseName: Forge AI 1.0.0
-          releaseBody: Native Forge AI 1.0.0 installers for macOS and Windows.
+          tagName: ${{ github.ref_name }}
+          releaseName: Forge AI Installers
+          releaseBody: Native Forge AI installers for macOS and Windows.
           releaseDraft: true
           prerelease: false
           args: --target universal-apple-darwin
@@ -46,8 +46,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v1.0.0
-          releaseName: Forge AI 1.0.0
-          releaseBody: Native Forge AI 1.0.0 installers for macOS and Windows.
+          tagName: ${{ github.ref_name }}
+          releaseName: Forge AI Installers
+          releaseBody: Native Forge AI installers for macOS and Windows.
           releaseDraft: true
           prerelease: false
