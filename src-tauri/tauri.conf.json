@@ -28,6 +28,14 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico",
+      "icons/icon.png"
+    ],
     "category": "DeveloperTool",
     "shortDescription": "Unified AI runtime and provider control center",
     "longDescription": "Manage local, remote, and cloud AI providers, monitor token usage and costs, benchmark models, and expose a unified developer workflow.",
