@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import {
   Activity,
   AlertTriangle,
+  BookOpen,
   Bot,
   Cloud,
   Gauge,
+  MessageSquareText,
+  PanelLeftClose,
+  PanelLeftOpen,
   Plus,
   Send,
   Server,
@@ -13,7 +18,7 @@ import {
 } from 'lucide-react';
 import { api, type ChatResult, type Connection, type Metrics, type UsageSummary } from './lib/api';
 
-type Tab = 'dashboard' | 'connections' | 'playground' | 'usage' | 'settings';
+type Tab = 'chat' | 'dashboard' | 'connections' | 'usage' | 'guide' | 'settings';
 type ChatMessage = { role: 'user' | 'assistant'; content: string; meta?: ChatResult };
 
 const labels: Record<Connection['kind'], string> = {
@@ -47,24 +52,27 @@ const emptyMetrics: Metrics = {
   gpu_name: '',
 };
 
-const icons = {
-  dashboard: <Gauge />,
-  connections: <Cloud />,
-  playground: <Send />,
-  usage: <Activity />,
-  settings: <Settings />,
-};
+const navItems: { id: Tab; label: string; icon: ReactNode }[] = [
+  { id: 'chat', label: 'Chat', icon: <MessageSquareText /> },
+  { id: 'dashboard', label: 'Dashboard', icon: <Gauge /> },
+  { id: 'connections', label: 'Connections', icon: <Cloud /> },
+  { id: 'usage', label: 'Usage', icon: <Activity /> },
+  { id: 'guide', label: 'How to Use', icon: <BookOpen /> },
+  { id: 'settings', label: 'Settings', icon: <Settings /> },
+];
 
 const titles = {
+  chat: 'Chat',
   dashboard: 'AI control center',
   connections: 'Provider connections',
-  playground: 'Unified AI chat',
   usage: 'Tokens and cost',
+  guide: 'How to use Forge AI',
   settings: 'Application settings',
 };
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>('dashboard');
+  const [tab, setTab] = useState<Tab>('chat');
+  const [collapsed, setCollapsed] = useState(false);
   const [metrics, setMetrics] = useState(emptyMetrics);
   const [connections, setConnections] = useState<Connection[]>([]);
   const [usage, setUsage] = useState(emptyUsage);
@@ -89,21 +97,34 @@ export default function App() {
   }, []);
 
   return (
-    <div className="shell">
+    <div className={`shell ${collapsed ? 'collapsed' : ''}`}>
       <aside>
+        <button
+          className="collapse-button"
+          onClick={() => setCollapsed((value) => !value)}
+          aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
+          title={collapsed ? 'Expand menu' : 'Collapse menu'}
+        >
+          {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
+        </button>
+
         <div className="brand">
           <b>F</b>
           <div>
             <strong>Forge AI</strong>
-            <small>Version 1.0.0</small>
           </div>
         </div>
 
         <nav>
-          {(['dashboard', 'connections', 'playground', 'usage', 'settings'] as Tab[]).map((x) => (
-            <button className={tab === x ? 'active' : ''} onClick={() => setTab(x)} key={x}>
-              {icons[x]}
-              {x}
+          {navItems.map((item) => (
+            <button
+              className={tab === item.id ? 'active' : ''}
+              onClick={() => setTab(item.id)}
+              key={item.id}
+              title={collapsed ? item.label : undefined}
+            >
+              {item.icon}
+              <span>{item.label}</span>
             </button>
           ))}
         </nav>
@@ -121,16 +142,16 @@ export default function App() {
 
       <main>
         <header>
-          <small>FORGE AI 1.0.0</small>
           <h1>{titles[tab]}</h1>
           <p>One desktop control center for local, remote, and cloud AI.</p>
         </header>
 
         {error && <div className="error">{error}</div>}
+        {tab === 'chat' && <Chat items={connections} usage={usage} refresh={refresh} />}
         {tab === 'dashboard' && <Dashboard metrics={metrics} connections={connections} usage={usage} />}
         {tab === 'connections' && <Connections items={connections} refresh={refresh} />}
-        {tab === 'playground' && <Playground items={connections} usage={usage} refresh={refresh} />}
         {tab === 'usage' && <Usage usage={usage} />}
+        {tab === 'guide' && <Guide />}
         {tab === 'settings' && (
           <section className="panel">
             <h2>Settings</h2>
@@ -282,7 +303,7 @@ function Connections({ items, refresh }: { items: Connection[]; refresh: () => P
   );
 }
 
-function Playground({
+function Chat({
   items,
   usage,
   refresh,
@@ -468,6 +489,80 @@ function Playground({
           <p>Requests can fail over when a model is unavailable, out of quota, or too expensive.</p>
         </div>
       </aside>
+    </div>
+  );
+}
+
+function Guide() {
+  return (
+    <div className="guide">
+      <section className="panel guide-hero">
+        <h2>Use Forge AI as one place for all your models</h2>
+        <p>
+          Add the providers you have access to, chat from one workspace, and switch models when cost,
+          quota, speed, or quality makes another provider a better choice.
+        </p>
+      </section>
+
+      <section className="guide-grid">
+        <article className="panel">
+          <span>1</span>
+          <h3>Add a provider</h3>
+          <p>
+            Open Connections, add your local Ollama, remote server, OpenAI, Claude, Gemini, or
+            OpenAI-compatible endpoint, then save the API key and default model.
+          </p>
+        </article>
+        <article className="panel">
+          <span>2</span>
+          <h3>Start a chat</h3>
+          <p>
+            Open Chat, choose a provider, confirm the model ID, and send your prompt. Forge AI keeps
+            the conversation transcript inside the app.
+          </p>
+        </article>
+        <article className="panel">
+          <span>3</span>
+          <h3>Switch without losing context</h3>
+          <p>
+            If a provider is out of quota or too expensive, select another model from the side panel.
+            The next request includes recent conversation context.
+          </p>
+        </article>
+        <article className="panel">
+          <span>4</span>
+          <h3>Track usage</h3>
+          <p>
+            Use the active model panel and Usage screen to monitor input tokens, output tokens,
+            latency, requests, and estimated cost.
+          </p>
+        </article>
+      </section>
+
+      <section className="panel">
+        <h2>Provider setup checklist</h2>
+        <div className="checklist">
+          <label>
+            <strong>Cloud API keys</strong>
+            OpenAI, Anthropic, Gemini, and other cloud providers require developer API keys. Consumer
+            subscriptions do not automatically work as API credentials.
+          </label>
+          <label>
+            <strong>Local models</strong>
+            Start Ollama locally and use `http://localhost:11434` as the base URL.
+          </label>
+          <label>
+            <strong>Remote models</strong>
+            Run Ollama on your Linux server and expose it only through a trusted network, VPN, or
+            protected reverse proxy.
+          </label>
+          <label>
+            <strong>Model IDs</strong>
+            Use the exact model ID from the provider, for example the Ollama model name you pulled or
+            the cloud model enabled for your account.
+          </label>
+        </div>
+      </section>
     </div>
   );
 }

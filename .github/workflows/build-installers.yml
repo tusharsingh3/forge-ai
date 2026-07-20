@@ -27,7 +27,7 @@ jobs:
       - run: npm run app:build:mac
       - uses: actions/upload-artifact@v4
         with:
-          name: Forge-AI-1.0.0-macOS
+          name: Forge-AI-macOS
           if-no-files-found: error
           path: |
             src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
@@ -47,7 +47,7 @@ jobs:
       - run: npm run app:build:windows
       - uses: actions/upload-artifact@v4
         with:
-          name: Forge-AI-1.0.0-Windows
+          name: Forge-AI-Windows
           if-no-files-found: error
           path: |
             src-tauri/target/release/bundle/nsis/*-setup.exe
