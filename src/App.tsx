@@ -99,20 +99,22 @@ export default function App() {
   return (
     <div className={`shell ${collapsed ? 'collapsed' : ''}`}>
       <aside>
-        <button
-          className="collapse-button"
-          onClick={() => setCollapsed((value) => !value)}
-          aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
-          title={collapsed ? 'Expand menu' : 'Collapse menu'}
-        >
-          {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
-        </button>
-
-        <div className="brand">
-          <b>F</b>
-          <div>
-            <strong>Forge AI</strong>
+        <div className="sidebar-top">
+          <div className="brand">
+            <b>F</b>
+            <div>
+              <strong>Forge AI</strong>
+            </div>
           </div>
+
+          <button
+            className="collapse-button"
+            onClick={() => setCollapsed((value) => !value)}
+            aria-label={collapsed ? 'Expand menu' : 'Collapse menu'}
+            title={collapsed ? 'Expand menu' : 'Collapse menu'}
+          >
+            {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
+          </button>
         </div>
 
         <nav>
