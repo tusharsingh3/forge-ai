@@ -1,0 +1,73 @@
+<svg width="1440" height="900" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1440" height="900" fill="#080C12"/>
+  <rect x="1" y="1" width="1438" height="898" rx="18" fill="#080C12" stroke="#243244" stroke-width="2"/>
+  <rect x="0" y="0" width="1440" height="34" fill="#0B1119"/>
+  <circle cx="22" cy="17" r="7" fill="#FF5F57"/>
+  <circle cx="46" cy="17" r="7" fill="#FFBD2E"/>
+  <circle cx="70" cy="17" r="7" fill="#28C840"/>
+  <text x="100" y="23" fill="#AAB7C8" font-family="Inter, Arial" font-size="15" font-weight="700">Forge AI</text>
+
+  <rect x="0" y="34" width="260" height="866" fill="#0C1119"/>
+  <rect x="259" y="34" width="1" height="866" fill="#243244"/>
+  <rect x="22" y="74" width="42" height="42" rx="12" fill="#2F80ED"/>
+  <text x="39" y="102" fill="white" font-family="Inter, Arial" font-size="22" font-weight="800">F</text>
+  <text x="78" y="95" fill="#EEF2FB" font-family="Inter, Arial" font-size="18" font-weight="800">Forge AI</text>
+  <rect x="206" y="78" width="34" height="34" rx="9" fill="#101824" stroke="#26384D"/>
+  <path d="M216 88h14M216 95h14M216 102h14" stroke="#9EB3CC" stroke-width="2" stroke-linecap="round"/>
+
+  <rect x="18" y="154" width="224" height="46" rx="10" fill="#172334"/>
+  <text x="58" y="183" fill="#EEF2FB" font-family="Inter, Arial" font-size="17" font-weight="700">Chat</text>
+  <circle cx="39" cy="177" r="10" stroke="#EEF2FB" stroke-width="2"/>
+  <path d="M34 185l-2 7 7-3" stroke="#EEF2FB" stroke-width="2" stroke-linecap="round"/>
+  <text x="58" y="236" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Dashboard</text>
+  <text x="58" y="290" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Connections</text>
+  <text x="58" y="344" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Usage</text>
+  <text x="58" y="398" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">How to Use</text>
+  <text x="58" y="452" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Settings</text>
+
+  <rect x="20" y="770" width="220" height="92" rx="12" fill="#101824" stroke="#293747"/>
+  <text x="34" y="797" fill="#8B98AD" font-family="Inter, Arial" font-size="13">This device</text>
+  <text x="34" y="822" fill="#EEF2FB" font-family="Inter, Arial" font-size="14" font-weight="800">Apple M-series</text>
+  <text x="34" y="845" fill="#8B98AD" font-family="Inter, Arial" font-size="13">8 cores - 16 GB RAM</text>
+
+  <text x="302" y="102" fill="#EEF2FB" font-family="Inter, Arial" font-size="32" font-weight="800">Chat</text>
+  <text x="302" y="134" fill="#8B98AD" font-family="Inter, Arial" font-size="17">One desktop control center for local, remote, and cloud AI.</text>
+
+  <rect x="302" y="172" width="718" height="646" rx="14" fill="#0F1620" stroke="#243244"/>
+  <rect x="302" y="172" width="718" height="116" rx="14" fill="#101824" stroke="#243244"/>
+  <text x="324" y="210" fill="#7FBFFF" font-family="Inter, Arial" font-size="13" font-weight="800" letter-spacing="4">CONVERSATION</text>
+  <text x="324" y="244" fill="#EEF2FB" font-family="Inter, Arial" font-size="26" font-weight="800">Build Forge AI Desktop App</text>
+  <rect x="650" y="204" width="190" height="42" rx="8" fill="#0B1119" stroke="#334356"/>
+  <text x="668" y="231" fill="#EEF2FB" font-family="Inter, Arial" font-size="15">Select provider</text>
+  <rect x="852" y="204" width="140" height="42" rx="8" fill="#0B1119" stroke="#334356"/>
+  <text x="870" y="231" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Model ID</text>
+
+  <circle cx="352" cy="337" r="20" fill="#183152"/>
+  <text x="344" y="344" fill="#EEF2FB" font-family="Inter, Arial" font-size="16" font-weight="800">AI</text>
+  <rect x="390" y="310" width="590" height="114" rx="12" fill="#111A26" stroke="#26384D"/>
+  <text x="410" y="340" fill="#EEF2FB" font-family="Inter, Arial" font-size="17" font-weight="800">Forge AI</text>
+  <text x="410" y="374" fill="#DBE5F4" font-family="Inter, Arial" font-size="16">Start a unified chat here, then switch providers from the model</text>
+  <text x="410" y="400" fill="#DBE5F4" font-family="Inter, Arial" font-size="16">control panel without losing conversation context.</text>
+
+  <rect x="322" y="732" width="575" height="64" rx="10" fill="#0B1119" stroke="#334356"/>
+  <rect x="914" y="736" width="82" height="56" rx="10" fill="#2F80ED"/>
+  <text x="940" y="770" fill="white" font-family="Inter, Arial" font-size="16" font-weight="800">Send</text>
+
+  <rect x="1038" y="172" width="358" height="646" rx="14" fill="#0F1620" stroke="#243244"/>
+  <text x="1060" y="210" fill="#7FBFFF" font-family="Inter, Arial" font-size="13" font-weight="800" letter-spacing="4">ACTIVE MODEL</text>
+  <text x="1060" y="244" fill="#EEF2FB" font-family="Inter, Arial" font-size="22" font-weight="800">No provider selected</text>
+  <text x="1060" y="272" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Add a provider to begin</text>
+  <rect x="1060" y="300" width="314" height="184" rx="12" fill="#101824" stroke="#26384D"/>
+  <text x="1080" y="335" fill="#98A6BA" font-family="Inter, Arial" font-size="15">Context Usage</text>
+  <text x="1340" y="335" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">12%</text>
+  <rect x="1080" y="354" width="260" height="8" rx="4" fill="#1D2A3B"/>
+  <rect x="1080" y="354" width="32" height="8" rx="4" fill="#42B6FF"/>
+  <text x="1080" y="399" fill="#98A6BA" font-family="Inter, Arial" font-size="15">Input Tokens</text>
+  <text x="1340" y="399" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">0</text>
+  <text x="1080" y="435" fill="#98A6BA" font-family="Inter, Arial" font-size="15">Estimated Cost</text>
+  <text x="1340" y="435" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">$0.0000</text>
+  <text x="1060" y="535" fill="#EEF2FB" font-family="Inter, Arial" font-size="21" font-weight="800">Switch Model</text>
+  <text x="1060" y="580" fill="#8B98AD" font-family="Inter, Arial" font-size="16">Add a provider connection to unlock</text>
+  <text x="1060" y="604" fill="#8B98AD" font-family="Inter, Arial" font-size="16">model switching.</text>
+  <text x="1060" y="676" fill="#EEF2FB" font-family="Inter, Arial" font-size="21" font-weight="800">Fallback Order</text>
+</svg>
