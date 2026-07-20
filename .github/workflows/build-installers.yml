@@ -4,6 +4,8 @@ on:
   workflow_dispatch:
   push:
     branches: [master]
+  pull_request:
+    branches: [master]
 
 permissions:
   contents: read
@@ -17,11 +19,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin,x86_64-apple-darwin
       - run: npm install
+      - run: npm run build
       - run: npm run app:build:mac
       - uses: actions/upload-artifact@v4
         with:
@@ -39,9 +41,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
       - uses: dtolnay/rust-toolchain@stable
       - run: npm install
+      - run: npm run build
       - run: npm run app:build:windows
       - uses: actions/upload-artifact@v4
         with:
