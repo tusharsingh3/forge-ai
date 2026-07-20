@@ -29,6 +29,10 @@ textarea {
     #080c12;
 }
 
+.shell.collapsed {
+  grid-template-columns: 84px 1fr;
+}
+
 aside:not(.model-panel) {
   position: fixed;
   width: 260px;
@@ -38,6 +42,33 @@ aside:not(.model-panel) {
   border-right: 1px solid #202a37;
   display: flex;
   flex-direction: column;
+}
+
+.shell.collapsed aside:not(.model-panel) {
+  width: 84px;
+  padding: 18px 12px;
+}
+
+.collapse-button {
+  align-self: flex-end;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 16px;
+  border: 1px solid #26384d;
+  border-radius: 9px;
+  background: #101824;
+  color: #9eb3cc;
+  cursor: pointer;
+}
+
+.collapse-button svg {
+  width: 18px;
+}
+
+.shell.collapsed .collapse-button {
+  align-self: center;
 }
 
 .brand {
@@ -55,6 +86,17 @@ aside:not(.model-panel) {
   border-radius: 11px;
   background: linear-gradient(135deg, #4ca9ff, #1f5eff);
   color: #fff;
+}
+
+.shell.collapsed .brand {
+  justify-content: center;
+  margin-bottom: 22px;
+}
+
+.shell.collapsed .brand > div,
+.shell.collapsed .device,
+.shell.collapsed nav button span {
+  display: none;
 }
 
 .brand strong,
@@ -89,6 +131,11 @@ nav button {
   color: #8d97aa;
   text-transform: capitalize;
   cursor: pointer;
+}
+
+.shell.collapsed nav button {
+  justify-content: center;
+  padding: 12px;
 }
 
 nav button svg {
@@ -128,13 +175,8 @@ header {
   margin-bottom: 28px;
 }
 
-header small {
-  color: #5bb7ff;
-  letter-spacing: 0.14em;
-}
-
 header h1 {
-  margin: 6px 0;
+  margin: 0 0 8px;
   font-size: 30px;
 }
 
@@ -581,6 +623,68 @@ pre {
   font-size: 12px;
 }
 
+.guide {
+  display: grid;
+  gap: 18px;
+}
+
+.guide-hero {
+  background:
+    linear-gradient(135deg, rgba(47, 128, 237, 0.16), rgba(15, 22, 32, 0.92)),
+    rgba(15, 22, 32, 0.92);
+}
+
+.guide-hero h2 {
+  margin-top: 0;
+  font-size: 26px;
+}
+
+.guide-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.guide-grid .panel {
+  margin: 0;
+}
+
+.guide-grid article > span {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-bottom: 14px;
+  border-radius: 10px;
+  background: #173456;
+  color: #83c8ff;
+  font-weight: 800;
+}
+
+.guide-grid h3 {
+  margin: 0 0 8px;
+}
+
+.checklist {
+  display: grid;
+  gap: 12px;
+}
+
+.checklist label {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  border: 1px solid #26384d;
+  border-radius: 10px;
+  background: #101824;
+  color: #98a6ba;
+  line-height: 1.5;
+}
+
+.checklist strong {
+  color: #eef2fb;
+}
+
 @media (max-width: 1200px) {
   .workspace {
     grid-template-columns: 1fr;
@@ -588,6 +692,10 @@ pre {
 
   .model-panel {
     position: static;
+  }
+
+  .guide-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
