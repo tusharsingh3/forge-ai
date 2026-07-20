@@ -7,7 +7,7 @@ Forge AI is a cross-platform desktop control center for local, remote, and cloud
 Forge AI has three main responsibilities:
 
 1. **Provider connections**: Users add one or more AI providers with a base URL, API key, default model, and optional token pricing.
-2. **Unified chat**: The Playground tab keeps the conversation inside Forge AI. When a user switches providers, the app sends the recent transcript with the next prompt so the new model can continue with context.
+2. **Unified chat**: The Chat screen keeps the conversation inside Forge AI. When a user switches providers, the app sends the recent transcript with the next prompt so the new model can continue with context.
 3. **Usage tracking**: Each request records input tokens, output tokens, total tokens, estimated cost, latency, provider, model, and timestamp.
 
 Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are not the same as API access. To use cloud models in Forge AI, each user needs API access from the provider they want to use.
@@ -36,10 +36,10 @@ Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are 
    - **Default model**: The model ID to use by default.
    - **Input/output cost per million tokens**: Optional, used for cost estimates.
 6. Save the connection.
-7. Open **Playground**.
+7. Open **Chat**.
 8. Select the provider/model and start chatting.
 
-The Playground keeps the current conversation in the app. If one provider reaches quota, becomes unavailable, or is too expensive, select another provider in the model control panel and continue from the same chat.
+The Chat screen keeps the current conversation in the app. If one provider reaches quota, becomes unavailable, or is too expensive, select another provider in the model control panel and continue from the same chat.
 
 ## Generating API keys
 
@@ -147,8 +147,8 @@ Users install Forge AI normally and launch it from **Applications**, **Launchpad
 1. Open this repository's **Actions** tab.
 2. Run **Build Forge AI installers**.
 3. Download these workflow artifacts:
-   - `Forge-AI-1.0.0-macOS`
-   - `Forge-AI-1.0.0-Windows`
+   - `Forge-AI-macOS`
+   - `Forge-AI-Windows`
 
 The workflow compiles on the native operating system because Tauri's Windows and macOS bundles must be produced on their corresponding build hosts.
 
@@ -214,7 +214,7 @@ src-tauri\target\release\bundle\msi\
 
 ## Release build
 
-Pushing the tag `v1.0.0` runs the **Release Forge AI** workflow and creates a draft GitHub release containing the macOS and Windows installers.
+Pushing the configured release tag runs the **Release Forge AI** workflow and creates a draft GitHub release containing the macOS and Windows installers.
 
 ## Signing status
 
