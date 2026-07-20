@@ -11,10 +11,12 @@ This file tracks UI or backend pieces that exist but are not fully functional ye
 
 ## Connection management
 
+- **Connection form validation is minimal**: users can save empty names, empty base URLs, missing model IDs, or invalid pricing values.
 - **Delete connection is not exposed in the UI**: the backend has `delete_connection`, but the Connections screen only supports add/edit.
 - **Test connection is not exposed in the UI**: the backend has `test_connection`, but there is no Test button or status display on the Connections screen.
 - **Enabled/disabled state is not editable**: connections have an `enabled` field, but the modal does not expose a toggle.
 - **Token pricing fields are not editable**: connections support input/output cost per million tokens, but the modal does not expose those fields.
+- **API keys are not stored in OS credential storage yet**: connection data is saved through the app data JSON flow, so secrets should be moved to Keychain/Credential Manager before public distribution.
 
 ## Usage tracking
 
@@ -24,4 +26,5 @@ This file tracks UI or backend pieces that exist but are not fully functional ye
 ## Provider details
 
 - **Gemini setup needs a clearer default base URL**: the UI asks for a base URL, but the app does not prefill or explain the expected Gemini API base URL.
+- **Provider adapters need live compatibility testing**: OpenAI-compatible, Anthropic, Gemini, and Ollama request/response handling should be validated against real accounts/endpoints.
 - **Provider-specific model discovery is not implemented**: users must manually type model IDs instead of selecting from available models.
