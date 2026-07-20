@@ -2,6 +2,16 @@
 
 Forge AI is a cross-platform desktop control center for local, remote, and cloud AI providers. It lets users connect their own model endpoints, track token usage and cost, and continue a conversation while switching between providers such as OpenAI, Anthropic, Gemini, local Ollama, or a remote Ollama/Linux server.
 
+## Screenshots
+
+The main Chat screen is where users talk to a selected provider, view active model telemetry, and switch models without losing the current conversation context.
+
+![Forge AI Chat screen](docs/screenshots/chat-screen.svg)
+
+The How to Use screen explains the app flow for adding providers, starting a chat, switching models, and tracking usage.
+
+![Forge AI How to Use screen](docs/screenshots/how-to-use-screen.svg)
+
 ## How the app works
 
 Forge AI has three main responsibilities:
