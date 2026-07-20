@@ -1,0 +1,80 @@
+<svg width="1440" height="900" viewBox="0 0 1440 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1440" height="900" fill="#080C12"/>
+  <rect x="0" y="0" width="1440" height="34" fill="#0B1119"/>
+  <circle cx="22" cy="17" r="7" fill="#FF5F57"/>
+  <circle cx="46" cy="17" r="7" fill="#FFBD2E"/>
+  <circle cx="70" cy="17" r="7" fill="#28C840"/>
+  <text x="100" y="23" fill="#AAB7C8" font-family="Inter, Arial" font-size="15" font-weight="700">Forge AI</text>
+
+  <rect x="0" y="34" width="260" height="866" fill="#0C1119"/>
+  <rect x="259" y="34" width="1" height="866" fill="#243244"/>
+  <rect x="22" y="74" width="42" height="42" rx="12" fill="#2F80ED"/>
+  <text x="39" y="102" fill="white" font-family="Inter, Arial" font-size="22" font-weight="800">F</text>
+  <text x="78" y="95" fill="#EEF2FB" font-family="Inter, Arial" font-size="18" font-weight="800">Forge AI</text>
+  <rect x="206" y="78" width="34" height="34" rx="9" fill="#101824" stroke="#26384D"/>
+  <path d="M216 88h14M216 95h14M216 102h14" stroke="#9EB3CC" stroke-width="2" stroke-linecap="round"/>
+
+  <text x="58" y="183" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Chat</text>
+  <text x="58" y="236" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Dashboard</text>
+  <text x="58" y="290" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Connections</text>
+  <text x="58" y="344" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Usage</text>
+  <rect x="18" y="368" width="224" height="46" rx="10" fill="#172334"/>
+  <text x="58" y="397" fill="#EEF2FB" font-family="Inter, Arial" font-size="17" font-weight="700">How to Use</text>
+  <text x="58" y="452" fill="#8D97AA" font-family="Inter, Arial" font-size="17" font-weight="700">Settings</text>
+
+  <text x="302" y="102" fill="#EEF2FB" font-family="Inter, Arial" font-size="32" font-weight="800">How to use Forge AI</text>
+  <text x="302" y="134" fill="#8B98AD" font-family="Inter, Arial" font-size="17">One desktop control center for local, remote, and cloud AI.</text>
+
+  <rect x="302" y="172" width="1038" height="142" rx="14" fill="#101824" stroke="#243244"/>
+  <text x="330" y="225" fill="#EEF2FB" font-family="Inter, Arial" font-size="28" font-weight="800">Use Forge AI as one place for all your models</text>
+  <text x="330" y="268" fill="#8B98AD" font-family="Inter, Arial" font-size="17">Add providers, chat from one workspace, and switch models when cost, quota, speed,</text>
+  <text x="330" y="294" fill="#8B98AD" font-family="Inter, Arial" font-size="17">or quality makes another provider a better choice.</text>
+
+  <g>
+    <rect x="302" y="342" width="246" height="186" rx="14" fill="#0F1620" stroke="#243244"/>
+    <rect x="330" y="370" width="34" height="34" rx="10" fill="#173456"/>
+    <text x="342" y="393" fill="#83C8FF" font-family="Inter, Arial" font-size="16" font-weight="800">1</text>
+    <text x="330" y="438" fill="#EEF2FB" font-family="Inter, Arial" font-size="20" font-weight="800">Add a provider</text>
+    <text x="330" y="474" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Save local, remote, or cloud</text>
+    <text x="330" y="498" fill="#8B98AD" font-family="Inter, Arial" font-size="15">model connections.</text>
+  </g>
+  <g>
+    <rect x="568" y="342" width="246" height="186" rx="14" fill="#0F1620" stroke="#243244"/>
+    <rect x="596" y="370" width="34" height="34" rx="10" fill="#173456"/>
+    <text x="608" y="393" fill="#83C8FF" font-family="Inter, Arial" font-size="16" font-weight="800">2</text>
+    <text x="596" y="438" fill="#EEF2FB" font-family="Inter, Arial" font-size="20" font-weight="800">Start a chat</text>
+    <text x="596" y="474" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Choose a provider, model,</text>
+    <text x="596" y="498" fill="#8B98AD" font-family="Inter, Arial" font-size="15">and send your prompt.</text>
+  </g>
+  <g>
+    <rect x="834" y="342" width="246" height="186" rx="14" fill="#0F1620" stroke="#243244"/>
+    <rect x="862" y="370" width="34" height="34" rx="10" fill="#173456"/>
+    <text x="874" y="393" fill="#83C8FF" font-family="Inter, Arial" font-size="16" font-weight="800">3</text>
+    <text x="862" y="438" fill="#EEF2FB" font-family="Inter, Arial" font-size="20" font-weight="800">Switch models</text>
+    <text x="862" y="474" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Continue with another AI</text>
+    <text x="862" y="498" fill="#8B98AD" font-family="Inter, Arial" font-size="15">without losing context.</text>
+  </g>
+  <g>
+    <rect x="1100" y="342" width="240" height="186" rx="14" fill="#0F1620" stroke="#243244"/>
+    <rect x="1128" y="370" width="34" height="34" rx="10" fill="#173456"/>
+    <text x="1140" y="393" fill="#83C8FF" font-family="Inter, Arial" font-size="16" font-weight="800">4</text>
+    <text x="1128" y="438" fill="#EEF2FB" font-family="Inter, Arial" font-size="20" font-weight="800">Track usage</text>
+    <text x="1128" y="474" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Monitor tokens, cost,</text>
+    <text x="1128" y="498" fill="#8B98AD" font-family="Inter, Arial" font-size="15">latency, and requests.</text>
+  </g>
+
+  <rect x="302" y="558" width="1038" height="244" rx="14" fill="#0F1620" stroke="#243244"/>
+  <text x="330" y="606" fill="#EEF2FB" font-family="Inter, Arial" font-size="24" font-weight="800">Provider setup checklist</text>
+  <rect x="330" y="638" width="460" height="58" rx="10" fill="#101824" stroke="#26384D"/>
+  <text x="352" y="663" fill="#EEF2FB" font-family="Inter, Arial" font-size="16" font-weight="800">Cloud API keys</text>
+  <text x="352" y="686" fill="#8B98AD" font-family="Inter, Arial" font-size="14">Use developer API keys, not consumer subscriptions.</text>
+  <rect x="812" y="638" width="500" height="58" rx="10" fill="#101824" stroke="#26384D"/>
+  <text x="834" y="663" fill="#EEF2FB" font-family="Inter, Arial" font-size="16" font-weight="800">Local models</text>
+  <text x="834" y="686" fill="#8B98AD" font-family="Inter, Arial" font-size="14">Run Ollama locally and connect to localhost.</text>
+  <rect x="330" y="716" width="460" height="58" rx="10" fill="#101824" stroke="#26384D"/>
+  <text x="352" y="741" fill="#EEF2FB" font-family="Inter, Arial" font-size="16" font-weight="800">Remote models</text>
+  <text x="352" y="764" fill="#8B98AD" font-family="Inter, Arial" font-size="14">Use protected server endpoints.</text>
+  <rect x="812" y="716" width="500" height="58" rx="10" fill="#101824" stroke="#26384D"/>
+  <text x="834" y="741" fill="#EEF2FB" font-family="Inter, Arial" font-size="16" font-weight="800">Model IDs</text>
+  <text x="834" y="764" fill="#8B98AD" font-family="Inter, Arial" font-size="14">Use exact provider model names.</text>
+</svg>
