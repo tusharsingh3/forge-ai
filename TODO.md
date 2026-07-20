@@ -7,6 +7,7 @@ This file tracks UI or backend pieces that exist but are not fully functional ye
 - **Automatic fallback is not implemented**: the Chat side panel displays a fallback order, but requests do not automatically retry on the next provider when quota, network, or provider errors occur.
 - **Conversation persistence is not implemented**: the current chat transcript is stored only in React state and resets when the app reloads or restarts.
 - **Context management is basic**: provider switching sends the recent transcript with the next prompt, but there is no summarization, token budgeting, or per-project memory yet.
+- **Theme mode is not implemented**: add app theming support with dark and light modes.
 - **Settings screen is placeholder-only**: it explains the next hardening task, but does not expose configurable app settings.
 
 ## Connection management
