@@ -1,0 +1,55 @@
+name: Release Forge AI
+
+on:
+  push:
+    tags:
+      - "v1.0.0"
+
+permissions:
+  contents: write
+
+jobs:
+  macos:
+    name: Release macOS universal build
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - run: npm install
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v1.0.0
+          releaseName: Forge AI 1.0.0
+          releaseBody: Native Forge AI 1.0.0 installers for macOS and Windows.
+          releaseDraft: true
+          prerelease: false
+          args: --target universal-apple-darwin
+
+  windows:
+    name: Release Windows build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm install
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v1.0.0
+          releaseName: Forge AI 1.0.0
+          releaseBody: Native Forge AI 1.0.0 installers for macOS and Windows.
+          releaseDraft: true
+          prerelease: false
