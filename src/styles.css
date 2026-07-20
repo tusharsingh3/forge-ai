@@ -27,6 +27,7 @@ textarea {
   background:
     radial-gradient(circle at top right, rgba(28, 98, 172, 0.16), transparent 30rem),
     #080c12;
+  transition: grid-template-columns 220ms ease;
 }
 
 .shell.collapsed {
@@ -42,43 +43,68 @@ aside:not(.model-panel) {
   border-right: 1px solid #202a37;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  transition:
+    width 220ms ease,
+    padding 220ms ease;
 }
 
 .shell.collapsed aside:not(.model-panel) {
   width: 84px;
-  padding: 18px 12px;
+  padding: 24px 12px;
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 28px;
+  min-height: 38px;
+}
+
+.shell.collapsed .sidebar-top {
+  justify-content: center;
+  gap: 0;
 }
 
 .collapse-button {
-  align-self: flex-end;
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
   width: 34px;
   height: 34px;
-  margin-bottom: 16px;
   border: 1px solid #26384d;
   border-radius: 9px;
   background: #101824;
   color: #9eb3cc;
   cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 220ms ease;
+}
+
+.collapse-button:hover {
+  border-color: #2f80ed;
+  color: #fff;
 }
 
 .collapse-button svg {
   width: 18px;
 }
 
-.shell.collapsed .collapse-button {
-  align-self: center;
-}
-
 .brand {
   display: flex;
   gap: 12px;
   align-items: center;
-  margin-bottom: 28px;
+  min-width: 0;
+  transition: gap 220ms ease;
 }
 
 .brand > b {
+  flex: 0 0 auto;
   display: grid;
   place-items: center;
   width: 38px;
@@ -89,14 +115,33 @@ aside:not(.model-panel) {
 }
 
 .shell.collapsed .brand {
-  justify-content: center;
-  margin-bottom: 22px;
+  gap: 0;
+}
+
+.brand > div,
+nav button span,
+.device {
+  opacity: 1;
+  max-width: 180px;
+  overflow: hidden;
+  transition:
+    opacity 160ms ease,
+    max-width 220ms ease,
+    transform 220ms ease;
 }
 
 .shell.collapsed .brand > div,
-.shell.collapsed .device,
-.shell.collapsed nav button span {
-  display: none;
+.shell.collapsed nav button span,
+.shell.collapsed .device {
+  opacity: 0;
+  max-width: 0;
+  pointer-events: none;
+  transform: translateX(-6px);
+}
+
+.shell.collapsed .brand {
+  width: 0;
+  overflow: hidden;
 }
 
 .brand strong,
@@ -131,11 +176,18 @@ nav button {
   color: #8d97aa;
   text-transform: capitalize;
   cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 160ms ease,
+    color 160ms ease,
+    gap 220ms ease,
+    padding 220ms ease;
 }
 
 .shell.collapsed nav button {
   justify-content: center;
   padding: 12px;
+  gap: 0;
 }
 
 nav button svg {
@@ -154,6 +206,7 @@ nav button:hover {
   border: 1px solid #293747;
   border-radius: 11px;
   background: #101722;
+  width: 100%;
 }
 
 .device strong {
