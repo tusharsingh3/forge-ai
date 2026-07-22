@@ -20,3 +20,11 @@ All previously tracked product TODOs are implemented. Use this checklist on both
 - [ ] Build and install both Windows NSIS and MSI packages on Windows 10 and Windows 11.
 - [ ] Verify credential prompts, upgrades, uninstall behavior, offline launch, and application data retention.
 - [ ] Add Apple notarization and Windows Authenticode signing before public distribution.
+
+
+## Provider usage limitations
+
+- [x] Track token usage independently by provider connection and model.
+- [x] Show provider-qualified model labels in Chat and Usage.
+- [x] Show the active conversation's calculated remaining context budget.
+- [ ] Add provider-specific quota adapters if cloud APIs expose authoritative account allowance/remaining-token endpoints. Until then, Forge AI must display remaining allowance as unavailable.

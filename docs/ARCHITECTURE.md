@@ -33,3 +33,10 @@ API keys use macOS Keychain and Windows Credential Manager through the Rust `key
 ## Version policy
 
 The application version remains 1.0.0 until Tushar explicitly requests a version bump.
+
+
+## Provider-aware usage identity
+
+Usage aggregation uses the composite identity `connection_id + model`. The provider connection is intentionally part of the key because two services can expose the same upstream model name while maintaining independent credentials, pricing, limits, and billing.
+
+The Rust backend returns both connection totals and `by_model` totals. Each model row includes its provider display name and a nullable `remaining_tokens` field. The frontend never infers subscription quota: `null` is rendered as unavailable. The active conversation's remaining context budget is calculated locally from the configured context token budget.

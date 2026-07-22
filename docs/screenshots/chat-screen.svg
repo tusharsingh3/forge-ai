@@ -55,19 +55,27 @@
 
   <rect x="1038" y="172" width="358" height="646" rx="14" fill="#0F1620" stroke="#243244"/>
   <text x="1060" y="210" fill="#7FBFFF" font-family="Inter, Arial" font-size="13" font-weight="800" letter-spacing="4">ACTIVE MODEL</text>
-  <text x="1060" y="244" fill="#EEF2FB" font-family="Inter, Arial" font-size="22" font-weight="800">No provider selected</text>
-  <text x="1060" y="272" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Add a provider to begin</text>
+  <text x="1060" y="244" fill="#EEF2FB" font-family="Inter, Arial" font-size="20" font-weight="800">Claude Opus - Claude</text>
+  <text x="1060" y="272" fill="#8B98AD" font-family="Inter, Arial" font-size="15">Anthropic API · claude-opus</text>
   <rect x="1060" y="300" width="314" height="184" rx="12" fill="#101824" stroke="#26384D"/>
-  <text x="1080" y="335" fill="#98A6BA" font-family="Inter, Arial" font-size="15">Context estimate</text>
-  <text x="1340" y="335" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">12%</text>
+  <text x="1080" y="335" fill="#98A6BA" font-family="Inter, Arial" font-size="15">Context remaining</text>
+  <text x="1340" y="335" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">10,560</text>
   <rect x="1080" y="354" width="260" height="8" rx="4" fill="#1D2A3B"/>
   <rect x="1080" y="354" width="32" height="8" rx="4" fill="#42B6FF"/>
   <text x="1080" y="399" fill="#98A6BA" font-family="Inter, Arial" font-size="15">Input Tokens</text>
-  <text x="1340" y="399" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">0</text>
+  <text x="1340" y="399" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">18,420</text>
   <text x="1080" y="435" fill="#98A6BA" font-family="Inter, Arial" font-size="15">Estimated Cost</text>
   <text x="1340" y="435" fill="#EEF5FF" font-family="Inter, Arial" font-size="15" font-weight="800" text-anchor="end">$0.0000</text>
-  <text x="1060" y="535" fill="#EEF2FB" font-family="Inter, Arial" font-size="21" font-weight="800">Switch Model</text>
-  <text x="1060" y="580" fill="#8B98AD" font-family="Inter, Arial" font-size="16">Add a provider connection to unlock</text>
-  <text x="1060" y="604" fill="#8B98AD" font-family="Inter, Arial" font-size="16">model switching.</text>
-  <text x="1060" y="676" fill="#EEF2FB" font-family="Inter, Arial" font-size="21" font-weight="800">Automatic fallback</text>
+  <text x="1060" y="515" fill="#EEF2FB" font-family="Inter, Arial" font-size="19" font-weight="800">Usage by model</text>
+  <rect x="1060" y="530" width="314" height="54" rx="9" fill="#132642" stroke="#2F80ED"/>
+  <text x="1074" y="552" fill="#EEF2FB" font-family="Inter, Arial" font-size="13" font-weight="700">Claude Opus - Claude</text>
+  <text x="1074" y="573" fill="#8C9AAF" font-family="Inter, Arial" font-size="12">25,100 used · Remaining unavailable</text>
+  <rect x="1060" y="592" width="314" height="54" rx="9" fill="#101824" stroke="#26384D"/>
+  <text x="1074" y="614" fill="#EEF2FB" font-family="Inter, Arial" font-size="13" font-weight="700">Claude Opus - Gemini</text>
+  <text x="1074" y="635" fill="#8C9AAF" font-family="Inter, Arial" font-size="12">9,840 used · Remaining unavailable</text>
+  <text x="1060" y="682" fill="#EEF2FB" font-family="Inter, Arial" font-size="19" font-weight="800">Switch model</text>
+  
+  
+  <text x="1060" y="724" fill="#8B98AD" font-family="Inter, Arial" font-size="14">Claude Opus - Claude</text>
+  <text x="1060" y="752" fill="#8B98AD" font-family="Inter, Arial" font-size="14">Claude Opus - Gemini</text>
 </svg>

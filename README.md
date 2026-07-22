@@ -250,3 +250,10 @@ Unsigned applications can be used for internal testing, but macOS Gatekeeper and
 - Authenticode code signing for Windows
 
 Signing credentials must be stored as encrypted GitHub Actions secrets and must never be committed to the repository.
+
+
+### Provider-aware model usage
+
+The Chat sidebar and Usage screen track every model independently for each configured provider. Display names use the format `Model - Provider`, so identical model IDs routed through different services remain separate—for example, `Claude Opus - Claude` and `Claude Opus - Gemini`.
+
+Forge AI records input tokens, output tokens, request counts, estimated cost, and the active conversation's remaining context budget. A cloud provider's remaining account or subscription allowance is shown only when its API reports a limit; otherwise the UI clearly displays `Remaining unavailable`.
