@@ -6,10 +6,11 @@ export interface Metrics { cpu_usage:number; total_memory:number; used_memory:nu
 export interface Connection { id:string; name:string; kind:ProviderKind; base_url:string; api_key:string; has_api_key:boolean; default_model:string; enabled:boolean; input_cost_per_million:number; output_cost_per_million:number; }
 export interface ChatMessage { role:'user'|'assistant'; content:string; meta?:ChatResult; }
 export interface Conversation { id:string; title:string; connection_id:string; model:string; messages:ChatMessage[]; updated_at:number; }
-export interface Settings { theme:ThemeMode; automatic_fallback:boolean; context_token_budget:number; context_message_limit:number; fallback_connection_ids:string[]; }
+export interface Settings { theme:ThemeMode; automatic_fallback:boolean; context_token_budget:number; context_message_limit:number; fallback_connection_ids:string[]; model_token_allowances:Record<string,number>; }
 export interface ChatResult { connection_id:string; connection_name:string; model:string; response:string; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; latency_ms:number; created_at:number; fallback_attempts:string[]; }
 export interface UsageConnection { connection_id:string; connection_name:string; requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; }
-export interface UsageSummary { total_requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; by_connection:UsageConnection[]; recent:ChatResult[]; }
+export interface UsageModel extends UsageConnection { model:string; token_allowance:number|null; remaining_tokens:number|null; }
+export interface UsageSummary { total_requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; by_connection:UsageConnection[]; by_model:UsageModel[]; recent:ChatResult[]; }
 
 export const api = {
   metrics:()=>invoke<Metrics>('get_system_metrics'),

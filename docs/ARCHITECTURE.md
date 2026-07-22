@@ -15,9 +15,11 @@ All execution targets are represented as connections:
 
 The UI talks to one provider-neutral command layer. Provider adapters are responsible for authentication, model discovery, request formatting, response parsing, token accounting, and capability reporting. The command layer applies a configurable context token/message budget and retries enabled providers in the configured fallback order.
 
+Usage identity is the composite key `(connection_id, model)`. This keeps identically named models from different providers separate. Optional token allowances are stored in settings under the same composite identity; remaining tokens are derived locally as `allowance - recorded usage` and are never presented as provider-reported quota.
+
 ## Persistence
 
-- Connections (without secrets), conversations, settings, and the last 1,000 usage records are stored in the platform application-data directory.
+- Connections (without secrets), conversations, settings (including per-model token allowances), and the last 1,000 usage records are stored in the platform application-data directory.
 - API keys are stored through the operating system credential service (macOS Keychain or Windows Credential Manager). Legacy keys are migrated out of JSON when a connection is saved.
 - Conversations retain messages and provider/model selection across restarts. Context sent to providers is bounded by user-configurable token and message limits.
 
