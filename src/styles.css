@@ -161,6 +161,7 @@ aside:not(.model-panel) {
 
 .brand > div,
 nav button span,
+.account-nav span,
 .device {
   opacity: 1;
   max-width: 180px;
@@ -173,6 +174,7 @@ nav button span,
 
 .shell.collapsed .brand > div,
 .shell.collapsed nav button span,
+.shell.collapsed .account-nav span,
 .shell.collapsed .device {
   opacity: 0;
   max-width: 0;
@@ -225,6 +227,27 @@ nav button {
     padding 220ms ease;
 }
 
+.account-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  padding: 11px;
+  border: 1px solid #26384d;
+  border-radius: 10px;
+  background: #101824;
+  color: #b9c6d8;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+}
+.account-nav.active { border-color: #2f80ed; background: #173456; color: #fff; }
+.account-nav svg { flex: 0 0 auto; width: 20px; }
+.account-nav span,.account-nav small { display: block; overflow: hidden; text-overflow: ellipsis; }
+.account-nav small { margin-top: 2px; color: #7f8da2; font-size: 10px; }
+.shell.collapsed .account-nav { justify-content: center; }
+
 .shell.collapsed nav button {
   justify-content: center;
   padding: 12px;
@@ -249,6 +272,32 @@ nav button:hover {
   background: #101722;
   width: 100%;
 }
+
+.auth-layout { display:grid; grid-template-columns:minmax(300px,.8fr) minmax(420px,1fr); gap:24px; max-width:1050px; margin:40px auto; align-items:center; }
+.auth-copy h2 { margin:10px 0; font-size:34px; }
+.auth-copy > p { color:#95a3b7; font-size:16px; line-height:1.6; }
+.eyebrow { color:#7fbfff; font-size:12px; text-transform:uppercase; letter-spacing:.12em; }
+.privacy-note { display:grid; grid-template-columns:32px 1fr; gap:12px; margin-top:28px; padding:16px; border:1px solid #286847; border-radius:12px; background:rgba(29,125,76,.12); }
+.privacy-note svg { color:#86e4ad; }
+.privacy-note strong,.privacy-note small { display:block; }
+.privacy-note small { margin-top:4px; color:#91a0b6; line-height:1.45; }
+.auth-card { padding:28px; }
+.auth-card > button:not(.secondary) { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; border:1px solid #315078; border-radius:8px; background:#2f80ed; color:#fff; padding:11px; }
+.oauth-buttons { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:18px 0; }
+.oauth-buttons button { justify-content:center; }
+.auth-links { display:flex; justify-content:space-between; gap:12px; margin-top:16px; }
+.auth-links button { padding:0; border:0; background:transparent; color:#7fbfff; cursor:pointer; }
+.account-layout { display:grid; gap:18px; max-width:1050px; }
+.account-card { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:18px; }
+.account-card h2 { margin:5px 0; }
+.account-card p { margin:0 0 10px; }
+.account-avatar { display:grid; place-items:center; width:64px; height:64px; border-radius:18px; background:#173456; color:#83c8ff; }
+.status-pill { display:inline-flex; align-items:center; gap:5px; padding:5px 9px; border-radius:999px; background:#3b2f16; color:#ffd46b; font-size:12px; }
+.status-pill.verified { background:rgba(29,125,76,.18); color:#86e4ad; }
+.status-pill svg { width:14px; }
+.account-actions { display:flex; flex-wrap:wrap; gap:10px; }
+.danger-zone { border-color:#59313a; }
+@media (max-width: 1100px) { .auth-layout { grid-template-columns:1fr; margin:10px auto; } }
 
 .device strong {
   font-size: 12px;

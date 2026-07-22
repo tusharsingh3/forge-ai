@@ -5,6 +5,7 @@ use std::{collections::HashMap, fs, path::PathBuf, time::{Instant, SystemTime, U
 use sysinfo::System;
 
 const KEYRING_SERVICE: &str = "com.forge-ai.desktop";
+const ACCOUNT_SESSION_KEY: &str = "forge-account-session";
 
 #[derive(Debug, Clone, Serialize)]
 struct Metrics { cpu_usage: f32, total_memory: u64, used_memory: u64, available_memory: u64, platform: String, architecture: String, cpu_brand: String, logical_cores: usize, gpu_name: String }
@@ -44,6 +45,11 @@ struct UsageModel { connection_id: String, provider_name: String, model: String,
 #[derive(Debug, Clone, Serialize)]
 struct UsageSummary { total_requests: u64, input_tokens: u64, output_tokens: u64, total_tokens: u64, estimated_cost: f64, by_connection: Vec<UsageConnection>, by_model: Vec<UsageModel>, recent: Vec<ChatResult> }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct AccountUser { id: String, email: String, display_name: String, email_verified: bool }
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct AccountSession { access_token: String, refresh_token: String, expires_at: u64, user: AccountUser }
+
 fn app_dir() -> PathBuf { let base = dirs::data_local_dir().unwrap_or_else(std::env::temp_dir); let path = base.join("Forge AI"); let _ = fs::create_dir_all(&path); path }
 fn path(name: &str) -> PathBuf { app_dir().join(name) }
 fn read_json<T: for<'de> Deserialize<'de> + Default>(path: PathBuf) -> T { fs::read_to_string(path).ok().and_then(|v| serde_json::from_str(&v).ok()).unwrap_or_default() }
@@ -53,6 +59,40 @@ fn normalized(url: &str) -> String { url.trim().trim_end_matches('/').to_string(
 fn credential(id: &str) -> Result<Entry, String> { Entry::new(KEYRING_SERVICE, id).map_err(|e| format!("Credential storage unavailable: {e}")) }
 fn hydrate_key(connection: &mut Connection) { connection.api_key = credential(&connection.id).ok().and_then(|e| e.get_password().ok()).unwrap_or_default(); connection.has_api_key = !connection.api_key.is_empty(); }
 fn public_connection(mut connection: Connection) -> Connection { connection.api_key.clear(); connection }
+
+#[tauri::command]
+fn get_account_session() -> Result<Option<AccountSession>, String> {
+    match credential(ACCOUNT_SESSION_KEY)?.get_password() {
+        Ok(value) => serde_json::from_str(&value).map(Some).map_err(|_| "The saved Forge account session is invalid".into()),
+        Err(keyring::Error::NoEntry) => Ok(None),
+        Err(error) => Err(format!("Could not read the Forge account session: {error}")),
+    }
+}
+
+#[tauri::command]
+fn save_account_session(session: AccountSession) -> Result<(), String> {
+    if session.access_token.trim().is_empty() || session.refresh_token.trim().is_empty() || session.user.id.trim().is_empty() { return Err("The account service returned an incomplete session".into()); }
+    let value=serde_json::to_string(&session).map_err(|e|e.to_string())?;
+    credential(ACCOUNT_SESSION_KEY)?.set_password(&value).map_err(|e|format!("Could not save the Forge account session securely: {e}"))
+}
+
+#[tauri::command]
+fn clear_account_session() -> Result<(), String> {
+    match credential(ACCOUNT_SESSION_KEY)?.delete_credential() { Ok(())|Err(keyring::Error::NoEntry)=>Ok(()), Err(error)=>Err(format!("Could not clear the Forge account session: {error}")) }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct Installation { device_id: String }
+
+#[tauri::command]
+fn get_device_id() -> Result<String, String> {
+    let mut installation:Installation=read_json(path("installation.json"));
+    if installation.device_id.is_empty() {
+        installation.device_id=uuid::Uuid::new_v4().to_string();
+        write_json(path("installation.json"),&installation)?;
+    }
+    Ok(installation.device_id)
+}
 
 #[tauri::command]
 fn get_system_metrics() -> Metrics { let mut s = System::new_all(); s.refresh_all(); Metrics { cpu_usage: s.global_cpu_usage(), total_memory: s.total_memory(), used_memory: s.used_memory(), available_memory: s.available_memory(), platform: std::env::consts::OS.into(), architecture: std::env::consts::ARCH.into(), cpu_brand: s.cpus().first().map(|c| c.brand().into()).unwrap_or_default(), logical_cores: s.cpus().len(), gpu_name: if cfg!(target_os="macos") { "Apple Metal compatible".into() } else { "System GPU".into() } } }
@@ -132,4 +172,4 @@ async fn send_chat(connection_id:String,model:String,messages:Vec<ChatMessage>)-
 #[tauri::command] fn clear_usage_history()->Result<(),String>{write_json(path("usage.json"),&Vec::<ChatResult>::new())}
 
 #[cfg_attr(mobile,tauri::mobile_entry_point)]
-pub fn run(){tauri::Builder::default().plugin(tauri_plugin_shell::init()).invoke_handler(tauri::generate_handler![get_system_metrics,list_connections,save_connection,delete_connection,test_connection,discover_models,send_chat,list_conversations,save_conversation,delete_conversation,get_settings,save_settings,get_usage_summary,clear_usage_history]).run(tauri::generate_context!()).expect("error while running Forge AI");}
+pub fn run(){tauri::Builder::default().plugin(tauri_plugin_shell::init()).invoke_handler(tauri::generate_handler![get_system_metrics,list_connections,save_connection,delete_connection,test_connection,discover_models,send_chat,list_conversations,save_conversation,delete_conversation,get_settings,save_settings,get_usage_summary,clear_usage_history,get_account_session,save_account_session,clear_account_session,get_device_id]).run(tauri::generate_context!()).expect("error while running Forge AI");}
