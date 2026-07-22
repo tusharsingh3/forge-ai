@@ -52,9 +52,11 @@ jobs:
         include:
           - name: macOS universal
             os: macos-14
+            targets: aarch64-apple-darwin,x86_64-apple-darwin
             command: npm run app:build:mac
           - name: Windows x64
             os: windows-latest
+            targets: x86_64-pc-windows-msvc
             command: npm run app:build:windows
     runs-on: ${{ matrix.os }}
     steps:
@@ -65,7 +67,7 @@ jobs:
           cache: npm
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
+          targets: ${{ matrix.targets }}
       - run: npm ci
       - run: npm test
       - run: npm run build
@@ -74,6 +76,7 @@ jobs:
         with:
           name: quality-${{ matrix.name }}
           if-no-files-found: error
+          retention-days: 14
           path: |
             src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
             src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app
