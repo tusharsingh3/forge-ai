@@ -4,7 +4,7 @@ Forge AI is a cross-platform desktop control center for local, remote, and cloud
 
 ## Screenshots
 
-The main Chat screen is where users talk to a selected provider, view active model telemetry, and switch models without losing the current conversation context.
+The main Chat screen is where users talk to a selected provider, view per-model token usage and optional remaining allowances, and switch models without losing the current conversation context. Models are always identified with their provider, for example `Claude Opus — Claude`, so the same model name exposed by different providers remains separate.
 
 ![Forge AI Chat screen](docs/screenshots/chat-screen.svg)
 
@@ -23,7 +23,7 @@ Forge AI has three main responsibilities:
 1. **Provider connections**: Users add one or more AI providers with a base URL, API key, default model, and optional token pricing.
 2. **Unified persistent chat**: Conversations survive restarts. Context is bounded by configurable message and estimated-token budgets, and follows manual or automatic provider switches.
 3. **Automatic fallback**: Provider/network/quota errors retry the configured enabled-provider order.
-4. **Usage tracking**: Each request records input tokens, output tokens, total tokens, estimated cost, latency, provider, model, and timestamp in a clearable request-history table.
+4. **Usage tracking**: Each request records input tokens, output tokens, total tokens, estimated cost, latency, provider, model, and timestamp in a clearable request-history table. Chat aggregates usage by provider/model identity and supports an optional user-configured token allowance for calculating a remaining balance.
 5. **Secure secrets**: API keys are stored in macOS Keychain or Windows Credential Manager, not application JSON.
 
 Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are not the same as API access. To use cloud models in Forge AI, each user needs API access from the provider they want to use.
@@ -56,6 +56,8 @@ Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are 
 8. Select the provider/model and start chatting.
 
 Use **Test** to validate access and **Discover** to load available model IDs. If one provider reaches quota or becomes unavailable, Forge AI automatically tries the configured fallback order; you can also switch manually.
+
+In Chat, model names use the `Model — Provider` format. Enter a positive token allowance in the active-model panel to track a local remaining balance for that exact provider/model pair. Forge AI calculates this value from locally recorded usage; when no allowance is configured it displays **Not configured** because cloud providers do not expose a consistent remaining-quota API.
 
 ## Generating API keys
 

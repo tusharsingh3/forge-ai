@@ -31,8 +31,9 @@ struct Conversation { id: String, title: String, connection_id: String, model: S
 struct Settings {
     theme: String, automatic_fallback: bool, context_token_budget: u64,
     context_message_limit: usize, fallback_connection_ids: Vec<String>,
+    #[serde(default)] model_token_allowances: HashMap<String, u64>,
 }
-impl Default for Settings { fn default() -> Self { Self { theme: "dark".into(), automatic_fallback: true, context_token_budget: 12_000, context_message_limit: 24, fallback_connection_ids: vec![] } } }
+impl Default for Settings { fn default() -> Self { Self { theme: "dark".into(), automatic_fallback: true, context_token_budget: 12_000, context_message_limit: 24, fallback_connection_ids: vec![], model_token_allowances: HashMap::new() } } }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 struct ChatResult { connection_id: String, connection_name: String, model: String, response: String, input_tokens: u64, output_tokens: u64, total_tokens: u64, estimated_cost: f64, latency_ms: f64, created_at: u64, #[serde(default)] fallback_attempts: Vec<String> }
@@ -40,7 +41,9 @@ struct ChatResult { connection_id: String, connection_name: String, model: Strin
 #[derive(Debug, Clone, Serialize)]
 struct UsageConnection { connection_id: String, connection_name: String, requests: u64, input_tokens: u64, output_tokens: u64, total_tokens: u64, estimated_cost: f64 }
 #[derive(Debug, Clone, Serialize)]
-struct UsageSummary { total_requests: u64, input_tokens: u64, output_tokens: u64, total_tokens: u64, estimated_cost: f64, by_connection: Vec<UsageConnection>, recent: Vec<ChatResult> }
+struct UsageModel { connection_id: String, connection_name: String, model: String, requests: u64, input_tokens: u64, output_tokens: u64, total_tokens: u64, estimated_cost: f64, token_allowance: Option<u64>, remaining_tokens: Option<u64> }
+#[derive(Debug, Clone, Serialize)]
+struct UsageSummary { total_requests: u64, input_tokens: u64, output_tokens: u64, total_tokens: u64, estimated_cost: f64, by_connection: Vec<UsageConnection>, by_model: Vec<UsageModel>, recent: Vec<ChatResult> }
 
 fn app_dir() -> PathBuf { let base = dirs::data_local_dir().unwrap_or_else(std::env::temp_dir); let path = base.join("Forge AI"); let _ = fs::create_dir_all(&path); path }
 fn path(name: &str) -> PathBuf { app_dir().join(name) }
@@ -126,7 +129,15 @@ async fn send_chat(connection_id:String,model:String,messages:Vec<ChatMessage>)-
 #[tauri::command] fn delete_conversation(id:String)->Result<(),String>{let mut items:Vec<Conversation>=read_json(path("conversations.json"));items.retain(|x|x.id!=id);write_json(path("conversations.json"),&items)}
 #[tauri::command] fn get_settings()->Settings{read_json(path("settings.json"))}
 #[tauri::command] fn save_settings(settings:Settings)->Result<(),String>{if settings.theme!="dark"&&settings.theme!="light"&&settings.theme!="system"{return Err("Invalid theme".into())}if settings.context_token_budget<256||settings.context_message_limit==0{return Err("Context limits must be positive".into())}write_json(path("settings.json"),&settings)}
-#[tauri::command] fn get_usage_summary()->UsageSummary{let history:Vec<ChatResult>=read_json(path("usage.json"));let mut grouped:HashMap<String,UsageConnection>=HashMap::new();for x in &history{let row=grouped.entry(x.connection_id.clone()).or_insert(UsageConnection{connection_id:x.connection_id.clone(),connection_name:x.connection_name.clone(),requests:0,input_tokens:0,output_tokens:0,total_tokens:0,estimated_cost:0.0});row.requests+=1;row.input_tokens+=x.input_tokens;row.output_tokens+=x.output_tokens;row.total_tokens+=x.total_tokens;row.estimated_cost+=x.estimated_cost}UsageSummary{total_requests:history.len()as u64,input_tokens:history.iter().map(|x|x.input_tokens).sum(),output_tokens:history.iter().map(|x|x.output_tokens).sum(),total_tokens:history.iter().map(|x|x.total_tokens).sum(),estimated_cost:history.iter().map(|x|x.estimated_cost).sum(),by_connection:grouped.into_values().collect(),recent:history.into_iter().rev().take(100).collect()}}
+#[tauri::command] fn get_usage_summary()->UsageSummary{
+    let history:Vec<ChatResult>=read_json(path("usage.json"));let settings:Settings=read_json(path("settings.json"));
+    let mut grouped:HashMap<String,UsageConnection>=HashMap::new();let mut models:HashMap<String,UsageModel>=HashMap::new();
+    for x in &history{
+        let row=grouped.entry(x.connection_id.clone()).or_insert(UsageConnection{connection_id:x.connection_id.clone(),connection_name:x.connection_name.clone(),requests:0,input_tokens:0,output_tokens:0,total_tokens:0,estimated_cost:0.0});row.requests+=1;row.input_tokens+=x.input_tokens;row.output_tokens+=x.output_tokens;row.total_tokens+=x.total_tokens;row.estimated_cost+=x.estimated_cost;
+        let key=format!("{}\u{1f}{}",x.connection_id,x.model);let allowance=settings.model_token_allowances.get(&key).copied();let model=models.entry(key).or_insert(UsageModel{connection_id:x.connection_id.clone(),connection_name:x.connection_name.clone(),model:x.model.clone(),requests:0,input_tokens:0,output_tokens:0,total_tokens:0,estimated_cost:0.0,token_allowance:allowance,remaining_tokens:allowance});model.requests+=1;model.input_tokens+=x.input_tokens;model.output_tokens+=x.output_tokens;model.total_tokens+=x.total_tokens;model.estimated_cost+=x.estimated_cost;model.remaining_tokens=allowance.map(|limit|limit.saturating_sub(model.total_tokens));
+    }
+    UsageSummary{total_requests:history.len()as u64,input_tokens:history.iter().map(|x|x.input_tokens).sum(),output_tokens:history.iter().map(|x|x.output_tokens).sum(),total_tokens:history.iter().map(|x|x.total_tokens).sum(),estimated_cost:history.iter().map(|x|x.estimated_cost).sum(),by_connection:grouped.into_values().collect(),by_model:models.into_values().collect(),recent:history.into_iter().rev().take(100).collect()}
+}
 #[tauri::command] fn clear_usage_history()->Result<(),String>{write_json(path("usage.json"),&Vec::<ChatResult>::new())}
 
 #[cfg_attr(mobile,tauri::mobile_entry_point)]

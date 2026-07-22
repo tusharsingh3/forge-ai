@@ -13,6 +13,8 @@ All previously tracked product TODOs are implemented. Use this checklist on both
 - [ ] Exceed the configured context limits and confirm older messages are trimmed while the newest context is retained.
 - [ ] Verify light, dark, and system themes on both operating systems.
 - [ ] Verify the usage request table and Clear history confirmation.
+- [ ] Configure different token allowances for two provider/model pairs with the same model name and verify Chat tracks their used and remaining tokens independently.
+- [ ] Verify models without a configured allowance display `Not configured` rather than an inferred provider quota.
 
 ## Packaging testing
 
