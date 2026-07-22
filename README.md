@@ -12,13 +12,19 @@ The How to Use screen explains the app flow for adding providers, starting a cha
 
 ![Forge AI How to Use screen](docs/screenshots/how-to-use-screen.svg)
 
+Settings controls theme mode, automatic fallback order, and context budgets.
+
+![Forge AI Settings screen](docs/screenshots/settings-screen.svg)
+
 ## How the app works
 
 Forge AI has three main responsibilities:
 
 1. **Provider connections**: Users add one or more AI providers with a base URL, API key, default model, and optional token pricing.
-2. **Unified chat**: The Chat screen keeps the conversation inside Forge AI. When a user switches providers, the app sends the recent transcript with the next prompt so the new model can continue with context.
-3. **Usage tracking**: Each request records input tokens, output tokens, total tokens, estimated cost, latency, provider, model, and timestamp.
+2. **Unified persistent chat**: Conversations survive restarts. Context is bounded by configurable message and estimated-token budgets, and follows manual or automatic provider switches.
+3. **Automatic fallback**: Provider/network/quota errors retry the configured enabled-provider order.
+4. **Usage tracking**: Each request records input tokens, output tokens, total tokens, estimated cost, latency, provider, model, and timestamp in a clearable request-history table.
+5. **Secure secrets**: API keys are stored in macOS Keychain or Windows Credential Manager, not application JSON.
 
 Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are not the same as API access. To use cloud models in Forge AI, each user needs API access from the provider they want to use.
 
@@ -29,7 +35,7 @@ Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are 
 | Local Ollama | Run models on the same computer | `http://localhost:11434` |
 | Remote Ollama / Linux server | Run models on a rented server | `http://your-server-ip:11434` |
 | OpenAI API | Use OpenAI models with an API key | `https://api.openai.com/v1` |
-| Anthropic API | Use Claude models with an API key | `https://api.anthropic.com` |
+| Anthropic API | Use Claude models with an API key | `https://api.anthropic.com/v1` |
 | Google Gemini API | Use Gemini models with an API key | Gemini API endpoint configured by the app/provider adapter |
 | OpenAI-compatible API | Use providers that expose OpenAI-style APIs | Provider-specific URL |
 
@@ -43,13 +49,13 @@ Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are 
    - **Name**: A friendly label, for example `OpenAI GPT-5` or `Local Qwen`.
    - **Base URL**: The provider endpoint.
    - **API key**: The key generated from the provider console.
-   - **Default model**: The model ID to use by default.
+   - **Default model**: Discover and select a model from the provider, or enter its exact ID.
    - **Input/output cost per million tokens**: Optional, used for cost estimates.
 6. Save the connection.
 7. Open **Chat**.
 8. Select the provider/model and start chatting.
 
-The Chat screen keeps the current conversation in the app. If one provider reaches quota, becomes unavailable, or is too expensive, select another provider in the model control panel and continue from the same chat.
+Use **Test** to validate access and **Discover** to load available model IDs. If one provider reaches quota or becomes unavailable, Forge AI automatically tries the configured fallback order; you can also switch manually.
 
 ## Generating API keys
 
@@ -82,7 +88,7 @@ Example model IDs depend on the models enabled for your account.
 Recommended base URL:
 
 ```text
-https://api.anthropic.com
+https://api.anthropic.com/v1
 ```
 
 Example model IDs depend on the Claude models enabled for your account.
@@ -96,6 +102,16 @@ Example model IDs depend on the Claude models enabled for your account.
 5. Add it to Forge AI using the **Google Gemini API** connection type.
 
 Model IDs depend on the Gemini models available for your account and region.
+
+Recommended base URL:
+
+```text
+https://generativelanguage.googleapis.com/v1beta
+```
+
+## Before deployment
+
+Complete every macOS and Windows item in [TODO.md](TODO.md). Live provider compatibility tests require tester-owned API keys/endpoints and must not use credentials committed to the repository or CI logs.
 
 ### OpenAI-compatible providers
 

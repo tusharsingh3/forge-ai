@@ -4,6 +4,47 @@
   background: #080c12;
 }
 
+:root[data-theme='light'] {
+  color: #152033;
+  background: #f4f7fb;
+}
+
+:root[data-theme='light'] .shell {
+  background: radial-gradient(circle at top right, rgba(47, 128, 237, 0.1), transparent 30rem), #f4f7fb;
+}
+
+:root[data-theme='light'] aside:not(.model-panel),
+:root[data-theme='light'] .card,
+:root[data-theme='light'] .panel,
+:root[data-theme='light'] .toolbar,
+:root[data-theme='light'] .chat-panel,
+:root[data-theme='light'] .model-panel,
+:root[data-theme='light'] .dialog {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: #d5deea;
+  color: #152033;
+}
+
+:root[data-theme='light'] input,
+:root[data-theme='light'] select,
+:root[data-theme='light'] textarea,
+:root[data-theme='light'] .message > div,
+:root[data-theme='light'] .meter-card,
+:root[data-theme='light'] .model-grid button,
+:root[data-theme='light'] .fallback span,
+:root[data-theme='light'] .checklist label,
+:root[data-theme='light'] .device {
+  background: #f7f9fc;
+  color: #152033;
+  border-color: #cbd6e4;
+}
+
+:root[data-theme='light'] .message p,
+:root[data-theme='light'] .checklist strong,
+:root[data-theme='light'] .metric-row strong {
+  color: #152033;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -386,7 +427,7 @@ pre {
   background: #151922;
 }
 
-.dialog > div {
+.dialog-actions {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -756,4 +797,175 @@ pre {
   .cards {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: #aab7ca;
+  font-size: 13px;
+}
+
+label small {
+  min-height: 16px;
+  color: #7f8da2;
+}
+
+.dialog {
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.dialog h2 {
+  margin-top: 0;
+}
+
+.dialog .error,
+.dialog .success {
+  margin: 10px 0;
+}
+
+.secondary,
+.icon-button {
+  background: transparent !important;
+  color: #b8c7da !important;
+}
+
+.danger-button {
+  background: transparent !important;
+  border-color: #70414a !important;
+  color: #ff9ca8 !important;
+}
+
+.model-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.model-field button {
+  margin-bottom: 12px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 8px 0 15px;
+}
+
+.toggle input {
+  width: auto;
+  margin: 0;
+}
+
+.success {
+  padding: 10px 12px;
+  border: 1px solid #286847;
+  border-radius: 8px;
+  background: rgba(29, 125, 76, 0.16);
+  color: #86e4ad;
+}
+
+.chat-header > div:first-child select {
+  min-width: 250px;
+  margin: 5px 0 0;
+}
+
+.chat-actions {
+  grid-template-columns: 180px 160px auto;
+}
+
+.icon-button {
+  width: 42px;
+  justify-content: center;
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  min-height: 380px;
+  color: #8d9bb0;
+  text-align: center;
+}
+
+.empty-state svg {
+  width: 40px;
+  height: 40px;
+}
+
+.empty-state h2 {
+  margin: 14px 0 4px;
+  color: inherit;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.settings-grid > div {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #26384d;
+}
+
+.theme-options {
+  display: flex;
+  gap: 10px;
+}
+
+.theme-options button {
+  text-transform: capitalize;
+}
+
+.theme-options button.selected {
+  border-color: #2f80ed;
+  background: #173456 !important;
+  color: white !important;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.section-heading h2,
+.section-heading p {
+  margin: 0 0 4px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th,
+td {
+  padding: 11px 10px;
+  border-bottom: 1px solid #26384d;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: #8fa0b7;
+}
+
+select[multiple] {
+  min-height: 110px;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
