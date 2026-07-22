@@ -9,7 +9,8 @@ export interface Conversation { id:string; title:string; connection_id:string; m
 export interface Settings { theme:ThemeMode; automatic_fallback:boolean; context_token_budget:number; context_message_limit:number; fallback_connection_ids:string[]; }
 export interface ChatResult { connection_id:string; connection_name:string; model:string; response:string; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; latency_ms:number; created_at:number; fallback_attempts:string[]; }
 export interface UsageConnection { connection_id:string; connection_name:string; requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; }
-export interface UsageSummary { total_requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; by_connection:UsageConnection[]; recent:ChatResult[]; }
+export interface UsageModel { connection_id:string; provider_name:string; model:string; requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; remaining_tokens:number|null; }
+export interface UsageSummary { total_requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; by_connection:UsageConnection[]; by_model:UsageModel[]; recent:ChatResult[]; }
 
 export const api = {
   metrics:()=>invoke<Metrics>('get_system_metrics'),
