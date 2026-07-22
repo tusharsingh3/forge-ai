@@ -16,6 +16,10 @@ Settings controls theme mode, automatic fallback order, and context budgets.
 
 ![Forge AI Settings screen](docs/screenshots/settings-screen.svg)
 
+The optional Account screen makes Local Mode explicit and keeps provider credentials on the device.
+
+![Forge AI Account screen](docs/screenshots/account-screen.svg)
+
 ## How the app works
 
 Forge AI has three main responsibilities:
@@ -27,6 +31,14 @@ Forge AI has three main responsibilities:
 5. **Secure secrets**: API keys are stored in macOS Keychain or Windows Credential Manager, not application JSON.
 
 Consumer subscriptions such as ChatGPT Plus, Claude Pro, or Gemini Advanced are not the same as API access. To use cloud models in Forge AI, each user needs API access from the provider they want to use.
+
+## Local Mode and Forge accounts
+
+Forge AI remains fully usable without registration. Optional Forge accounts add identity, email verification, secure desktop sessions, and connected-device management in preparation for future encrypted synchronization. Signing in does not upload conversations, settings, usage history, or provider API keys.
+
+Account-enabled builds set `VITE_FORGE_API_URL` to a service implementing [the Forge account API contract](docs/ACCOUNT_API.md). Builds without this variable show the Account interface in Local Mode and disable network account actions.
+
+See [Account and local-data privacy](docs/PRIVACY.md) for the current data boundary and deletion behavior.
 
 ## Supported connection types
 

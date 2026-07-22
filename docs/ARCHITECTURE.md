@@ -30,6 +30,24 @@ The UI talks to one provider-neutral command layer. Provider adapters are respon
 
 API keys use macOS Keychain and Windows Credential Manager through the Rust `keyring` adapter. Returned connection objects expose only whether a key exists, never the key itself.
 
+## Optional Forge accounts
+
+Forge AI starts in Local Mode and does not require registration. The desktop Account client is activated only when `VITE_FORGE_API_URL` is configured. It supports email/password, Google and GitHub device authorization, password reset, email verification, device revocation, logout-all, and account deletion through the versioned contract in [ACCOUNT_API.md](ACCOUNT_API.md).
+
+Access and rotating refresh tokens are stored as one native keyring entry; they are not written to application JSON. A stable random installation identifier is stored locally and sent only to account endpoints for device registration. Local conversations and usage remain owned by the installation. Signing in does not upload or relabel historical data.
+
+Forge account identity, provider connection identity, and provider/model usage identity remain independent:
+
+| Scope | Key | Storage |
+| --- | --- | --- |
+| Forge account | Forge user and registered device | Account service; session in native keyring |
+| Provider connection | Local connection ID | Local JSON; secret in native keyring |
+| Provider/model usage | Connection ID + model ID | Local usage history |
+
+Account-service failure, expiration, revocation, or offline startup must never block Local Mode or remove local application data.
+
+The user-facing data boundary is documented in [PRIVACY.md](PRIVACY.md).
+
 ## Version policy
 
 The application version remains 1.0.0 until Tushar explicitly requests a version bump.

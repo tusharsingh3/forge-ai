@@ -11,6 +11,8 @@ export interface ChatResult { connection_id:string; connection_name:string; mode
 export interface UsageConnection { connection_id:string; connection_name:string; requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; }
 export interface UsageModel { connection_id:string; provider_name:string; model:string; requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; remaining_tokens:number|null; }
 export interface UsageSummary { total_requests:number; input_tokens:number; output_tokens:number; total_tokens:number; estimated_cost:number; by_connection:UsageConnection[]; by_model:UsageModel[]; recent:ChatResult[]; }
+export interface StoredAccountSession { access_token:string; refresh_token:string; expires_at:number; user:AccountUser; }
+export interface AccountUser { id:string; email:string; display_name:string; email_verified:boolean; }
 
 export const api = {
   metrics:()=>invoke<Metrics>('get_system_metrics'),
@@ -27,4 +29,8 @@ export const api = {
   saveSettings:(settings:Settings)=>invoke<void>('save_settings',{settings}),
   usage:()=>invoke<UsageSummary>('get_usage_summary'),
   clearUsage:()=>invoke<void>('clear_usage_history'),
+  accountSession:()=>invoke<StoredAccountSession|null>('get_account_session'),
+  saveAccountSession:(session:StoredAccountSession)=>invoke<void>('save_account_session',{session}),
+  clearAccountSession:()=>invoke<void>('clear_account_session'),
+  deviceId:()=>invoke<string>('get_device_id'),
 };

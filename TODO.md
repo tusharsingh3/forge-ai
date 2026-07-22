@@ -13,6 +13,10 @@ All previously tracked product TODOs are implemented. Use this checklist on both
 - [ ] Exceed the configured context limits and confirm older messages are trimmed while the newest context is retained.
 - [ ] Verify light, dark, and system themes on both operating systems.
 - [ ] Verify the usage request table and Clear history confirmation.
+- [ ] Launch without `VITE_FORGE_API_URL`; confirm Local Mode, chats, connections, and usage remain fully functional while account actions are disabled.
+- [ ] Configure a staging account service and test email registration, verification, login, reset, rotating refresh, restart persistence, Google/GitHub device authorization, and non-enumerating errors.
+- [ ] Revoke another device, logout current/all devices, and delete an account; confirm local chats, usage, settings, and provider credentials remain untouched.
+- [ ] Start offline and with expired/revoked sessions; confirm Local Mode remains available and no local data is erased.
 
 ## Packaging testing
 
@@ -20,6 +24,7 @@ All previously tracked product TODOs are implemented. Use this checklist on both
 - [ ] Build and install both Windows NSIS and MSI packages on Windows 10 and Windows 11.
 - [ ] Verify credential prompts, upgrades, uninstall behavior, offline launch, and application data retention.
 - [ ] Add Apple notarization and Windows Authenticode signing before public distribution.
+- [ ] Deploy the account API contract, configure production OAuth applications/email delivery/rate limits/retention policy, and set `VITE_FORGE_API_URL` only after the service passes security review.
 
 
 ## Provider usage limitations
