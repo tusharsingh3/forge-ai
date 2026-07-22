@@ -69,6 +69,20 @@ struct UsageSummary {
     recent: Vec<ChatResult>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+struct ChatMessage { role: String, content: String }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct AppSettings {
+    theme: String,
+    automatic_fallback: bool,
+    context_token_budget: usize,
+    history_limit: usize,
+}
+impl Default for AppSettings {
+    fn default() -> Self { Self { theme: "dark".into(), automatic_fallback: true, context_token_budget: 12000, history_limit: 1000 } }
+}
+
 fn app_dir() -> PathBuf {
     let base = dirs::data_local_dir().unwrap_or_else(std::env::temp_dir);
     let path = base.join("Forge AI");
@@ -78,6 +92,10 @@ fn app_dir() -> PathBuf {
 
 fn connections_path() -> PathBuf { app_dir().join("connections.json") }
 fn usage_path() -> PathBuf { app_dir().join("usage.json") }
+fn conversation_path() -> PathBuf { app_dir().join("conversation.json") }
+fn settings_path() -> PathBuf { app_dir().join("settings.json") }
+fn credential(id: &str) -> Result<keyring::Entry, String> { keyring::Entry::new("Forge AI", id).map_err(|e| e.to_string()) }
+fn hydrate_key(connection: &mut Connection) { connection.api_key = credential(&connection.id).and_then(|e| e.get_password().map_err(|x| x.to_string())).unwrap_or_default(); }
 
 fn read_json<T: for<'de> Deserialize<'de> + Default>(path: PathBuf) -> T {
     fs::read_to_string(path).ok().and_then(|v| serde_json::from_str(&v).ok()).unwrap_or_default()
@@ -111,11 +129,14 @@ fn get_system_metrics() -> Metrics {
 }
 
 #[tauri::command]
-fn list_connections() -> Vec<Connection> { read_json(connections_path()) }
+fn list_connections() -> Vec<Connection> { let mut items: Vec<Connection> = read_json(connections_path()); for item in &mut items { item.api_key.clear(); } items }
 
 #[tauri::command]
 fn save_connection(connection: Connection) -> Result<(), String> {
     let mut items: Vec<Connection> = read_json(connections_path());
+    let mut connection = connection;
+    if !connection.api_key.is_empty() { credential(&connection.id)?.set_password(&connection.api_key).map_err(|e| e.to_string())?; }
+    connection.api_key.clear();
     if let Some(existing) = items.iter_mut().find(|item| item.id == connection.id) {
         *existing = connection;
     } else {
@@ -128,6 +149,7 @@ fn save_connection(connection: Connection) -> Result<(), String> {
 fn delete_connection(id: String) -> Result<(), String> {
     let mut items: Vec<Connection> = read_json(connections_path());
     items.retain(|item| item.id != id);
+    let _ = credential(&id).and_then(|e| e.delete_credential().map_err(|x| x.to_string()));
     write_json(connections_path(), &items)
 }
 
@@ -179,6 +201,8 @@ async fn provider_request(connection: &Connection, model: &str, prompt: &str) ->
 
 #[tauri::command]
 async fn test_connection(connection: Connection) -> Result<String, String> {
+    let mut connection = connection;
+    if connection.api_key.is_empty() { hydrate_key(&mut connection); }
     let client = reqwest::Client::new();
     let url = if connection.kind.contains("ollama") { format!("{}/api/tags", normalized(&connection.base_url)) } else { connection.base_url.clone() };
     let mut request = client.get(url);
@@ -188,9 +212,26 @@ async fn test_connection(connection: Connection) -> Result<String, String> {
 }
 
 #[tauri::command]
+async fn discover_models(connection: Connection) -> Result<Vec<String>, String> {
+    let mut connection = connection; if connection.api_key.is_empty() { hydrate_key(&mut connection); }
+    let client = reqwest::Client::new();
+    let url = match connection.kind.as_str() {
+        "local_ollama" | "remote_ollama" => format!("{}/api/tags", normalized(&connection.base_url)),
+        "gemini" => format!("{}/models?key={}", normalized(&connection.base_url), connection.api_key),
+        _ => format!("{}/models", normalized(&connection.base_url)),
+    };
+    let mut request = client.get(url); if !connection.api_key.is_empty() && connection.kind != "gemini" { request = request.bearer_auth(&connection.api_key); }
+    let response = request.send().await.map_err(|e| e.to_string())?; let status = response.status();
+    let value: Value = response.json().await.map_err(|e| e.to_string())?; if !status.is_success() { return Err(value.to_string()); }
+    let source = if connection.kind.contains("ollama") { value["models"].as_array() } else { value["data"].as_array().or_else(|| value["models"].as_array()) };
+    let mut models: Vec<String> = source.into_iter().flatten().filter_map(|v| v["id"].as_str().or_else(|| v["name"].as_str()).map(|s| s.trim_start_matches("models/").to_string())).collect();
+    models.sort(); models.dedup(); Ok(models)
+}
+
+#[tauri::command]
 async fn send_chat(connection_id: String, model: String, prompt: String) -> Result<ChatResult, String> {
     let connections: Vec<Connection> = read_json(connections_path());
-    let connection = connections.into_iter().find(|item| item.id == connection_id).ok_or("Connection not found")?;
+    let mut connection = connections.into_iter().find(|item| item.id == connection_id).ok_or("Connection not found")?; hydrate_key(&mut connection);
     let started = Instant::now();
     let (response, input_tokens, output_tokens) = provider_request(&connection, &model, &prompt).await?;
     let estimated_cost = input_tokens as f64 / 1_000_000.0 * connection.input_cost_per_million + output_tokens as f64 / 1_000_000.0 * connection.output_cost_per_million;
@@ -201,6 +242,21 @@ async fn send_chat(connection_id: String, model: String, prompt: String) -> Resu
     write_json(usage_path(), &history)?;
     Ok(result)
 }
+
+#[tauri::command]
+async fn send_chat_with_fallback(connection_ids: Vec<String>, model: String, prompt: String) -> Result<ChatResult, String> {
+    let settings: AppSettings = read_json(settings_path()); let all: Vec<Connection> = read_json(connections_path()); let mut errors = Vec::new();
+    let primary_id = connection_ids.first().cloned().unwrap_or_default();
+    let ids = if settings.automatic_fallback { connection_ids } else { connection_ids.into_iter().take(1).collect() };
+    for id in ids { if let Some(mut c) = all.iter().find(|x| x.id == id && x.enabled).cloned() { hydrate_key(&mut c); let selected_model = if id == primary_id && !model.is_empty() { model.clone() } else { c.default_model.clone() }; let started=Instant::now(); match provider_request(&c,&selected_model,&prompt).await { Ok((response,input_tokens,output_tokens)) => { let estimated_cost=input_tokens as f64/1_000_000.0*c.input_cost_per_million+output_tokens as f64/1_000_000.0*c.output_cost_per_million; let result=ChatResult{connection_id:c.id,connection_name:c.name,model:selected_model,response,input_tokens,output_tokens,total_tokens:input_tokens+output_tokens,estimated_cost,latency_ms:started.elapsed().as_secs_f64()*1000.0,created_at:epoch()}; let mut history:Vec<ChatResult>=read_json(usage_path()); history.push(result.clone()); if history.len()>settings.history_limit { history.drain(..history.len()-settings.history_limit); } write_json(usage_path(),&history)?; return Ok(result) }, Err(e)=>errors.push(format!("{}: {}",c.name,e)) } } }
+    Err(format!("All providers failed: {}", errors.join(" | ")))
+}
+
+#[tauri::command] fn get_conversation() -> Vec<ChatMessage> { read_json(conversation_path()) }
+#[tauri::command] fn save_conversation(messages: Vec<ChatMessage>) -> Result<(),String> { write_json(conversation_path(),&messages) }
+#[tauri::command] fn clear_conversation() -> Result<(),String> { write_json(conversation_path(),&Vec::<ChatMessage>::new()) }
+#[tauri::command] fn get_settings() -> AppSettings { read_json(settings_path()) }
+#[tauri::command] fn save_settings(settings: AppSettings) -> Result<(),String> { write_json(settings_path(),&settings) }
 
 #[tauri::command]
 fn get_usage_summary() -> UsageSummary {
@@ -220,7 +276,7 @@ fn clear_usage_history() -> Result<(), String> { write_json(usage_path(), &Vec::
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![get_system_metrics, list_connections, save_connection, delete_connection, test_connection, send_chat, get_usage_summary, clear_usage_history])
+        .invoke_handler(tauri::generate_handler![get_system_metrics, list_connections, save_connection, delete_connection, test_connection, discover_models, send_chat, send_chat_with_fallback, get_conversation, save_conversation, clear_conversation, get_settings, save_settings, get_usage_summary, clear_usage_history])
         .run(tauri::generate_context!())
         .expect("error while running Forge AI");
 }

@@ -3,6 +3,7 @@
   color: #eef2fb;
   background: #080c12;
 }
+.shell.light{color:#172033;background:#f4f7fb}.shell.light aside:not(.model-panel),.shell.light .card,.shell.light .panel,.shell.light .toolbar,.shell.light .chat-panel,.shell.light .model-panel{background:#fff;color:#172033;border-color:#d8e0eb}.shell.light input,.shell.light select,.shell.light textarea,.shell.light .message>div,.shell.light .meter-card,.shell.light .model-grid button,.shell.light .fallback span{background:#f7f9fc;color:#172033;border-color:#cbd5e1}.shell.system{color-scheme:light dark}
 
 * {
   box-sizing: border-box;
@@ -305,6 +306,7 @@ header h1 {
 .composer button svg {
   width: 16px;
 }
+.danger{background:#8f2d3a!important;border-color:#b84151!important}.secondary{background:#172334!important}.hint{display:block;color:#8b98ad;margin:-7px 0 12px}.status{color:#63d69a;margin:10px}.toggle{display:flex!important;align-items:center;gap:8px;margin:10px 0 14px}.toggle input{width:auto;margin:0}.dialog label{color:#aab6c8;font-size:13px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:12px;border-bottom:1px solid #26384d;font-size:13px}th{color:#8fb9e8}.settings-form{max-width:700px}.settings-form>label{display:block;margin:14px 0}.settings-form input,.settings-form select{margin-top:6px}.chat-actions{grid-template-columns:auto 190px 180px}
 
 .row {
   display: flex;
