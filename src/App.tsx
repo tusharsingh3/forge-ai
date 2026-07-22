@@ -11,15 +11,16 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Plus,
+  Trash2,
+  RefreshCw,
   Send,
   Server,
   Settings,
   Sparkles,
 } from 'lucide-react';
-import { api, type ChatResult, type Connection, type Metrics, type UsageSummary } from './lib/api';
+import { api, type AppSettings, type ChatMessage, type Connection, type Metrics, type UsageSummary } from './lib/api';
 
 type Tab = 'chat' | 'dashboard' | 'connections' | 'usage' | 'guide' | 'settings';
-type ChatMessage = { role: 'user' | 'assistant'; content: string; meta?: ChatResult };
 
 const labels: Record<Connection['kind'], string> = {
   local_ollama: 'Local Ollama',
@@ -77,13 +78,15 @@ export default function App() {
   const [connections, setConnections] = useState<Connection[]>([]);
   const [usage, setUsage] = useState(emptyUsage);
   const [error, setError] = useState('');
+  const [settings, setSettings] = useState<AppSettings>({theme:'dark',automatic_fallback:true,context_token_budget:12000,history_limit:1000});
 
   const refresh = async () => {
     try {
-      const [m, c, u] = await Promise.all([api.metrics(), api.connections(), api.usage()]);
+      const [m, c, u, s] = await Promise.all([api.metrics(), api.connections(), api.usage(), api.settings()]);
       setMetrics(m);
       setConnections(c);
       setUsage(u);
+      setSettings(s);
       setError('');
     } catch (e) {
       setError(String(e));
@@ -97,7 +100,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className={`shell ${collapsed ? 'collapsed' : ''}`}>
+    <div className={`shell ${collapsed ? 'collapsed' : ''} ${settings.theme}`}>
       <aside>
         <div className="sidebar-top">
           <div className="brand">
@@ -152,17 +155,9 @@ export default function App() {
         {tab === 'chat' && <Chat items={connections} usage={usage} refresh={refresh} />}
         {tab === 'dashboard' && <Dashboard metrics={metrics} connections={connections} usage={usage} />}
         {tab === 'connections' && <Connections items={connections} refresh={refresh} />}
-        {tab === 'usage' && <Usage usage={usage} />}
+        {tab === 'usage' && <Usage usage={usage} refresh={refresh} />}
         {tab === 'guide' && <Guide />}
-        {tab === 'settings' && (
-          <section className="panel">
-            <h2>Settings</h2>
-            <p>
-              Remote Linux servers are supported through Ollama or OpenAI-compatible connection URLs.
-              Secure OS credential storage is the next hardening task.
-            </p>
-          </section>
-        )}
+        {tab === 'settings' && <SettingsView value={settings} onSave={async s=>{await api.saveSettings(s);setSettings(s)}} />}
       </main>
     </div>
   );
@@ -210,9 +205,15 @@ function Dashboard({
 
 function Connections({ items, refresh }: { items: Connection[]; refresh: () => Promise<void> }) {
   const [form, setForm] = useState<Connection | null>(null);
+  const [formError,setFormError]=useState(''); const [status,setStatus]=useState(''); const [models,setModels]=useState<string[]>([]);
 
   const save = async () => {
     if (form) {
+      if(!form.name.trim()) return setFormError('Name is required.');
+      try { new URL(form.base_url); } catch { return setFormError('Enter a valid http/https base URL.'); }
+      if(!/^https?:\/\//.test(form.base_url)) return setFormError('Base URL must use http or https.');
+      if(!form.default_model.trim()) return setFormError('A default model is required.');
+      if(form.input_cost_per_million<0||form.output_cost_per_million<0) return setFormError('Pricing cannot be negative.');
       await api.saveConnection(form);
       setForm(null);
       await refresh();
@@ -232,7 +233,7 @@ function Connections({ items, refresh }: { items: Connection[]; refresh: () => P
               id: crypto.randomUUID(),
               name: '',
               kind: 'remote_ollama',
-              base_url: 'http://',
+              base_url: 'http://localhost:11434',
               api_key: '',
               default_model: '',
               enabled: true,
@@ -259,6 +260,7 @@ function Connections({ items, refresh }: { items: Connection[]; refresh: () => P
               </small>
             </div>
             <button onClick={() => setForm(c)}>Edit</button>
+            <button className="danger" onClick={async()=>{if(confirm(`Delete ${c.name}?`)){await api.deleteConnection(c.id);await refresh()}}}><Trash2/> Delete</button>
           </div>
         ))}
       </section>
@@ -270,7 +272,7 @@ function Connections({ items, refresh }: { items: Connection[]; refresh: () => P
             <input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
             <select
               value={form.kind}
-              onChange={(e) => setForm({ ...form, kind: e.target.value as Connection['kind'] })}
+              onChange={(e) => {const kind=e.target.value as Connection['kind'];setForm({ ...form, kind, base_url: kind==='gemini'?'https://generativelanguage.googleapis.com/v1beta':form.base_url })}}
             >
               {Object.entries(labels).map(([k, v]) => (
                 <option value={k} key={k}>
@@ -283,6 +285,7 @@ function Connections({ items, refresh }: { items: Connection[]; refresh: () => P
               value={form.base_url}
               onChange={(e) => setForm({ ...form, base_url: e.target.value })}
             />
+            {form.kind==='gemini'&&<small className="hint">Default: https://generativelanguage.googleapis.com/v1beta</small>}
             <input
               placeholder="API key"
               type="password"
@@ -294,8 +297,14 @@ function Connections({ items, refresh }: { items: Connection[]; refresh: () => P
               value={form.default_model}
               onChange={(e) => setForm({ ...form, default_model: e.target.value })}
             />
+            {!!models.length&&<select value={form.default_model} onChange={e=>setForm({...form,default_model:e.target.value})}><option value="">Select discovered model</option>{models.map(m=><option key={m}>{m}</option>)}</select>}
+            <div className="two"><label>Input $ / 1M tokens<input type="number" min="0" step="0.01" value={form.input_cost_per_million} onChange={e=>setForm({...form,input_cost_per_million:Number(e.target.value)})}/></label><label>Output $ / 1M tokens<input type="number" min="0" step="0.01" value={form.output_cost_per_million} onChange={e=>setForm({...form,output_cost_per_million:Number(e.target.value)})}/></label></div>
+            <label className="toggle"><input type="checkbox" checked={form.enabled} onChange={e=>setForm({...form,enabled:e.target.checked})}/> Enabled</label>
+            {formError&&<div className="error">{formError}</div>}{status&&<div className="status">{status}</div>}
             <div>
               <button onClick={() => setForm(null)}>Cancel</button>
+              <button onClick={async()=>{setStatus('Testing…');try{setStatus(await api.testConnection(form))}catch(e){setStatus(String(e))}}}>Test</button>
+              <button onClick={async()=>{setStatus('Discovering…');try{const x=await api.discoverModels(form);setModels(x);setStatus(`${x.length} models found`)}catch(e){setStatus(String(e))}}}><RefreshCw/> Models</button>
               <button onClick={save}>Save</button>
             </div>
           </div>
@@ -327,6 +336,9 @@ function Chat({
   ]);
   const [isSending, setIsSending] = useState(false);
 
+  useEffect(()=>{api.conversation().then(saved=>{if(saved.length)setMessages(saved)}).catch(()=>{})},[]);
+  useEffect(()=>{const t=setTimeout(()=>api.saveConversation(messages).catch(()=>{}),250);return()=>clearTimeout(t)},[messages]);
+
   useEffect(() => {
     if (!id && enabledItems[0]) {
       setId(enabledItems[0].id);
@@ -338,7 +350,8 @@ function Chat({
   const activeUsage = useMemo(() => usage.by_connection.find((item) => item.connection_id === id), [usage, id]);
   const recent = useMemo(() => usage.recent.find((item) => item.connection_id === id), [usage, id]);
   const fallbackItems = enabledItems.filter((item) => item.id !== id).slice(0, 3);
-  const contextPercent = Math.min(94, Math.max(12, Math.round((messages.length / 18) * 100)));
+  const contextChars=messages.reduce((n,m)=>n+m.content.length,0); const estimatedContextTokens=Math.ceil(contextChars/4);
+  const contextPercent = Math.min(100, Math.round((estimatedContextTokens / 12000) * 100));
   const quotaWarning = contextPercent > 70 || (activeUsage?.total_tokens ?? 0) > 50000;
 
   const switchProvider = (connection: Connection) => {
@@ -347,14 +360,17 @@ function Chat({
   };
 
   const buildContextPrompt = (nextPrompt: string) => {
-    const transcript = messages
-      .slice(-8)
+    const budgetChars=12000*4; let used=nextPrompt.length; const selected:ChatMessage[]=[];
+    for(const message of [...messages].reverse()){if(used+message.content.length>budgetChars)break;selected.unshift(message);used+=message.content.length}
+    const omitted=messages.length-selected.length;
+    const transcript = selected
       .map((message) => `${message.role === 'user' ? 'User' : 'Assistant'}: ${message.content}`)
       .join('\n\n');
 
     return [
       'Continue this Forge AI conversation without losing context.',
       'Use the transcript below as the shared context across providers.',
+      omitted ? `Earlier context summary: ${omitted} older messages were omitted to stay within the token budget. Continue using the retained recent decisions.` : '',
       transcript ? `Transcript:\n${transcript}` : '',
       `User: ${nextPrompt}`,
     ]
@@ -371,7 +387,8 @@ function Chat({
     setMessages((current) => [...current, { role: 'user', content: nextPrompt }]);
 
     try {
-      const r = await api.chat(id, model, buildContextPrompt(nextPrompt));
+      const order=[id,...enabledItems.filter(x=>x.id!==id).map(x=>x.id)];
+      const r = await api.chatWithFallback(order, model, buildContextPrompt(nextPrompt));
       setMessages((current) => [...current, { role: 'assistant', content: r.response, meta: r }]);
       await refresh();
     } catch (e) {
@@ -393,6 +410,7 @@ function Chat({
             <h2>Build Forge AI Desktop App</h2>
           </div>
           <div className="chat-actions">
+            <button className="secondary" onClick={async()=>{await api.clearConversation();setMessages([])}}>New chat</button>
             <select
               value={id}
               onChange={(e) => {
@@ -578,15 +596,20 @@ function MetricRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Usage({ usage }: { usage: UsageSummary }) {
+function Usage({ usage, refresh }: { usage: UsageSummary; refresh:()=>Promise<void> }) {
   return (
-    <div className="cards">
+    <><div className="toolbar"><div><h2>Usage history</h2><p>Token, cost, latency and provider details for recent requests.</p></div><button className="danger" onClick={async()=>{if(confirm('Clear all usage history?')){await api.clearUsage();await refresh()}}}><Trash2/> Clear history</button></div><div className="cards">
       <Card label="Requests" value={String(usage.total_requests)} />
       <Card label="Input tokens" value={usage.input_tokens.toLocaleString()} />
       <Card label="Output tokens" value={usage.output_tokens.toLocaleString()} />
       <Card label="Estimated cost" value={`$${usage.estimated_cost.toFixed(4)}`} />
-    </div>
+    </div><section className="panel table-wrap"><table><thead><tr><th>Date</th><th>Provider</th><th>Model</th><th>Tokens</th><th>Latency</th><th>Cost</th></tr></thead><tbody>{usage.recent.map((r,i)=><tr key={`${r.created_at}-${i}`}><td>{new Date(r.created_at*1000).toLocaleString()}</td><td>{r.connection_name}</td><td>{r.model}</td><td>{r.total_tokens.toLocaleString()}</td><td>{(r.latency_ms/1000).toFixed(2)}s</td><td>${r.estimated_cost.toFixed(5)}</td></tr>)}</tbody></table>{!usage.recent.length&&<p>No requests recorded yet.</p>}</section></>
   );
+}
+
+function SettingsView({value,onSave}:{value:AppSettings;onSave:(v:AppSettings)=>Promise<void>}){
+ const [form,setForm]=useState(value);const [saved,setSaved]=useState(false);useEffect(()=>setForm(value),[value]);
+ return <section className="panel settings-form"><h2>Application settings</h2><label>Theme<select value={form.theme} onChange={e=>setForm({...form,theme:e.target.value as AppSettings['theme']})}><option value="dark">Dark</option><option value="light">Light</option><option value="system">System</option></select></label><label className="toggle"><input type="checkbox" checked={form.automatic_fallback} onChange={e=>setForm({...form,automatic_fallback:e.target.checked})}/> Automatically retry the next enabled provider when a request fails</label><label>Context token budget<input type="number" min="1000" max="200000" value={form.context_token_budget} onChange={e=>setForm({...form,context_token_budget:Number(e.target.value)})}/></label><label>Usage history limit<input type="number" min="50" max="10000" value={form.history_limit} onChange={e=>setForm({...form,history_limit:Number(e.target.value)})}/></label><button onClick={async()=>{await onSave(form);setSaved(true);setTimeout(()=>setSaved(false),1500)}}>Save settings</button>{saved&&<span className="status">Saved</span>}<p>API keys are stored in macOS Keychain, Windows Credential Manager, or the Linux Secret Service—not in the connections JSON file.</p></section>
 }
 
 function Card({ label, value }: { label: string; value: string }) {
