@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: installers-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   macos:
     name: macOS universal app and DMG
@@ -19,16 +23,19 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-apple-darwin,x86_64-apple-darwin
-      - run: npm install
+      - run: npm ci
+      - run: npm test
       - run: npm run build
       - run: npm run app:build:mac
       - uses: actions/upload-artifact@v4
         with:
           name: Forge-AI-macOS
           if-no-files-found: error
+          retention-days: 14
           path: |
             src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
             src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app
@@ -41,14 +48,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - uses: dtolnay/rust-toolchain@stable
-      - run: npm install
+      - run: npm ci
+      - run: npm test
       - run: npm run build
       - run: npm run app:build:windows
       - uses: actions/upload-artifact@v4
         with:
           name: Forge-AI-Windows
           if-no-files-found: error
+          retention-days: 14
           path: |
             src-tauri/target/release/bundle/nsis/*-setup.exe
             src-tauri/target/release/bundle/msi/*.msi

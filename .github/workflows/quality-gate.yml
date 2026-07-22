@@ -1,0 +1,94 @@
+name: Forge AI quality gate
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend build and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
+
+  rust:
+    name: Rust checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - name: Report Rust formatting debt
+        shell: bash
+        run: |
+          if ! cargo fmt --manifest-path src-tauri/Cargo.toml --all -- --check; then
+            echo "::warning::Existing Rust sources are not fully rustfmt-formatted. Run 'cargo fmt --manifest-path src-tauri/Cargo.toml --all' in a dedicated formatting PR."
+          fi
+      - name: Report existing Clippy debt
+        shell: bash
+        run: |
+          if ! cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets --all-features -- -D warnings; then
+            echo "::warning::Existing Rust code has Clippy warnings. The native application build remains the blocking compilation gate; resolve lint debt in a dedicated cleanup PR."
+          fi
+      - run: cargo test --manifest-path src-tauri/Cargo.toml --all-features
+
+  installer-smoke:
+    name: ${{ matrix.name }} installer smoke build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macOS universal
+            os: macos-14
+            targets: aarch64-apple-darwin,x86_64-apple-darwin
+            command: npm run app:build:mac
+          - name: Windows x64
+            os: windows-latest
+            targets: x86_64-pc-windows-msvc
+            command: npm run app:build:windows
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.targets }}
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - run: ${{ matrix.command }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quality-${{ matrix.name }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app
+            src-tauri/target/release/bundle/nsis/*-setup.exe
+            src-tauri/target/release/bundle/msi/*.msi
